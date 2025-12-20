@@ -1,1 +1,1 @@
-"""Tests for my-python-project."""
+"""Tests for hornet-nest-locator."""

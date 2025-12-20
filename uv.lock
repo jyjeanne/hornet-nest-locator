@@ -649,7 +649,9 @@ version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "folium" },
+    { name = "pytest" },
     { name = "requests" },
+    { name = "ruff" },
 ]
 
 [package.optional-dependencies]
@@ -672,9 +674,11 @@ requires-dist = [
     { name = "folium", specifier = ">=0.15.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.8.0" },
     { name = "pyinstaller", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "pytest", specifier = ">=9.0.1" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.1.0" },
     { name = "requests", specifier = ">=2.32.0" },
+    { name = "ruff", specifier = ">=0.14.7" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
 ]
 provides-extras = ["dev"]

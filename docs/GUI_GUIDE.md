@@ -11,7 +11,7 @@ A modern, user-friendly GUI for locating hornet nests with professional Vespawat
 ### Launch the GUI
 
 ```bash
-cd /home/jeremy/my-python-project
+cd /home/jeremy/hornet-nest-locator
 uv run python gui.py
 ```
 

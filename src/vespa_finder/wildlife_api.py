@@ -12,16 +12,17 @@ from .models import HiveLocation, Observation
 
 class WildlifeAPIError(Exception):
     """Exception raised when wildlife API operations fail."""
+
     pass
 
 
 class WildlifeReporter:
     """
     Report hornet observations to wildlife conservation databases.
-    
+
     Supports multiple European databases for Asian hornet reporting.
     """
-    
+
     # Wildlife database endpoints
     DATABASES = {
         "vespawatch": {
@@ -44,15 +45,17 @@ class WildlifeReporter:
             "website": "https://observatoire.biodiversite.wallonie.be/frelon-asiatique",
         },
     }
-    
+
     def __init__(self):
         """Initialize wildlife reporter."""
         self.session = requests.Session()
-        self.session.headers.update({
-            "User-Agent": "VespaFinder/0.3.0 (+https://github.com/YOUR-USERNAME/vespa-finder)",
-            "Accept": "application/json",
-        })
-        
+        self.session.headers.update(
+            {
+                "User-Agent": "VespaFinder/0.3.0 (+https://github.com/YOUR-USERNAME/vespa-finder)",
+                "Accept": "application/json",
+            }
+        )
+
     def get_available_databases(self) -> List[Dict[str, str]]:
         """Get list of available wildlife databases."""
         return [
@@ -65,11 +68,13 @@ class WildlifeReporter:
             }
             for db_id, info in self.DATABASES.items()
         ]
-    
-    def report_to_vespawatch(self, observation: Observation, hive_location: HiveLocation) -> Dict[str, str]:
+
+    def report_to_vespawatch(
+        self, observation: Observation, hive_location: HiveLocation
+    ) -> Dict[str, str]:
         """
         Generate Vespawatch report (website submission only).
-        
+
         Returns instructions for manual submission since Vespawatch doesn't have a public API.
         """
         return {
@@ -82,12 +87,13 @@ class WildlifeReporter:
             ),
             "data": self._prepare_vespawatch_data(observation, hive_location),
         }
-    
-    def report_to_waarneming(self, observation: Observation, hive_location: HiveLocation, 
-                            api_key: Optional[str] = None) -> Dict[str, Union[str, bool]]:
+
+    def report_to_waarneming(
+        self, observation: Observation, hive_location: HiveLocation, api_key: Optional[str] = None
+    ) -> Dict[str, Union[str, bool]]:
         """
         Report to Waarneming.nl API.
-        
+
         Note: This requires an API key from Waarneming.nl.
         """
         if not api_key:
@@ -95,28 +101,28 @@ class WildlifeReporter:
                 "Waarneming.nl API requires authentication. "
                 "Please obtain an API key from https://waarneming.nl"
             )
-        
+
         db_info = self.DATABASES["waarneming"]
         if not db_info["api_url"]:
             raise WildlifeAPIError("Waarneming.nl API endpoint not configured")
-        
+
         # Prepare observation data
         observation_data = self._prepare_waarneming_data(observation, hive_location)
-        
+
         try:
             # Add authentication
             self.session.headers["Authorization"] = f"Bearer {api_key}"
-            
+
             # Submit observation
             response = self.session.post(
                 db_info["api_url"],
                 json=observation_data,
                 timeout=30,
             )
-            
+
             response.raise_for_status()
             result = response.json()
-            
+
             return {
                 "database": "waarneming",
                 "status": "success",
@@ -124,17 +130,19 @@ class WildlifeReporter:
                 "url": result.get("url"),
                 "message": "Observation successfully submitted to Waarneming.nl",
             }
-            
+
         except requests.exceptions.RequestException as e:
             raise WildlifeAPIError(f"Failed to submit to Waarneming.nl: {e}")
         finally:
             # Clean up authentication header
             self.session.headers.pop("Authorization", None)
-    
-    def report_to_observatoire(self, observation: Observation, hive_location: HiveLocation) -> Dict[str, str]:
+
+    def report_to_observatoire(
+        self, observation: Observation, hive_location: HiveLocation
+    ) -> Dict[str, str]:
         """
         Generate Observatoire Biodiversité Wallonie report (website submission only).
-        
+
         Returns instructions for manual submission.
         """
         return {
@@ -147,8 +155,10 @@ class WildlifeReporter:
             ),
             "data": self._prepare_observatoire_data(observation, hive_location),
         }
-    
-    def _prepare_vespawatch_data(self, observation: Observation, hive_location: HiveLocation) -> Dict[str, str]:
+
+    def _prepare_vespawatch_data(
+        self, observation: Observation, hive_location: HiveLocation
+    ) -> Dict[str, str]:
         """Prepare data for Vespawatch submission."""
         return {
             "species": "Vespa velutina (Asian hornet)",
@@ -163,8 +173,10 @@ class WildlifeReporter:
             "confidence": f"±{hive_location.confidence_radius:.0f} meters",
             "notes": observation.notes or "Submitted via VespaFinder",
         }
-    
-    def _prepare_waarneming_data(self, observation: Observation, hive_location: HiveLocation) -> Dict[str, Union[str, int, float]]:
+
+    def _prepare_waarneming_data(
+        self, observation: Observation, hive_location: HiveLocation
+    ) -> Dict[str, Union[str, int, float]]:
         """Prepare data for Waarneming.nl API."""
         return {
             "species": "Vespa velutina",
@@ -182,8 +194,10 @@ class WildlifeReporter:
             "accuracy": hive_location.confidence_radius,
             "source": "VespaFinder 0.3.0",
         }
-    
-    def _prepare_observatoire_data(self, observation: Observation, hive_location: HiveLocation) -> Dict[str, str]:
+
+    def _prepare_observatoire_data(
+        self, observation: Observation, hive_location: HiveLocation
+    ) -> Dict[str, str]:
         """Prepare data for Observatoire Biodiversité Wallonie submission."""
         return {
             "species": "Frelon asiatique (Vespa velutina)",
@@ -198,8 +212,10 @@ class WildlifeReporter:
             "precision": f"±{hive_location.confidence_radius:.0f} mètres",
             "remarques": observation.notes or "Soumis via VespaFinder",
         }
-    
-    def generate_combined_report(self, observation: Observation, hive_location: HiveLocation) -> Dict[str, Dict]:
+
+    def generate_combined_report(
+        self, observation: Observation, hive_location: HiveLocation
+    ) -> Dict[str, Dict]:
         """Generate a combined report for all databases."""
         return {
             "vespawatch": self.report_to_vespawatch(observation, hive_location),
@@ -212,7 +228,7 @@ class WildlifeReporter:
             },
             "observatoire": self.report_to_observatoire(observation, hive_location),
         }
-    
+
     def get_reporting_guide(self, country: str = "belgium") -> str:
         """Get reporting guide for specific country/region."""
         guides = {
@@ -247,10 +263,10 @@ class WildlifeReporter:
                 "email": None,
             },
         }
-        
+
         if country not in guides:
             country = "belgium"  # Default to Belgium
-        
+
         if country == "belgium":
             return guides[country]
         else:
