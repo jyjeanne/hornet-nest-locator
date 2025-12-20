@@ -338,7 +338,7 @@ class HornetLocatorGUI:
             text="🇫🇷 FR",
             command=self.switch_language,
             style="Action.TButton",
-            width=8,
+            width=10,
         )
         self.buttons["language"].grid(row=0, column=1, sticky=tk.E, padx=5)
 
@@ -372,14 +372,14 @@ class HornetLocatorGUI:
         row += 1
 
         self.labels["latitude"] = ttk.Label(input_frame, text=self.t("latitude"))
-        self.labels["latitude"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.labels["latitude"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
         self.lat_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_STANDARD)
         self.lat_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
         self.lat_entry.insert(0, "48.8584")
         row += 1
 
         self.labels["longitude"] = ttk.Label(input_frame, text=self.t("longitude"))
-        self.labels["longitude"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.labels["longitude"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
         self.lon_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_STANDARD)
         self.lon_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
         self.lon_entry.insert(0, "2.2945")
@@ -409,9 +409,9 @@ class HornetLocatorGUI:
         row += 1
 
         self.labels["bearing"] = ttk.Label(input_frame, text=self.t("bearing"))
-        self.labels["bearing"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.labels["bearing"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
         self.bearing_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
-        self.bearing_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
+        self.bearing_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         self.bearing_entry.insert(0, "45")
         row += 1
 
@@ -442,14 +442,14 @@ class HornetLocatorGUI:
         row += 1
 
         self.labels["minutes"] = ttk.Label(input_frame, text=self.t("minutes"))
-        self.labels["minutes"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.labels["minutes"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
         self.minutes_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
         self.minutes_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         self.minutes_entry.insert(0, "6")
         row += 1
 
         self.labels["seconds"] = ttk.Label(input_frame, text=self.t("seconds"))
-        self.labels["seconds"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.labels["seconds"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
         self.seconds_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
         self.seconds_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         self.seconds_entry.insert(0, "30")
@@ -470,20 +470,20 @@ class HornetLocatorGUI:
         row += 1
 
         self.labels["hornet_mark"] = ttk.Label(input_frame, text=self.t("hornet_mark"))
-        self.labels["hornet_mark"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.labels["hornet_mark"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
         self.color_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_STANDARD)
         self.color_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
         row += 1
 
         self.labels["speed"] = ttk.Label(input_frame, text=self.t("speed"))
-        self.labels["speed"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.labels["speed"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
         self.speed_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
         self.speed_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         row += 1
 
         self.labels["notes"] = ttk.Label(input_frame, text=self.t("notes"))
-        self.labels["notes"].grid(row=row, column=0, sticky=(tk.W, tk.N), pady=5)
-        self.notes_entry = tk.Text(input_frame, width=25, height=3)
+        self.labels["notes"].grid(row=row, column=0, sticky=(tk.W, tk.N), pady=5, padx=5)
+        self.notes_entry = tk.Text(input_frame, height=3)
         self.notes_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
         row += 1
 
@@ -554,7 +554,7 @@ class HornetLocatorGUI:
         self.results_labelframe.columnconfigure(0, weight=1)
 
         self.results_text = scrolledtext.ScrolledText(
-            self.results_labelframe, width=60, height=35, wrap=tk.WORD, font=("Courier", 10)
+            self.results_labelframe, height=30, wrap=tk.WORD, font=("Courier", 10)
         )
         self.results_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
