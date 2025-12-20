@@ -1,0 +1,79 @@
+
+============================================================
+RÉSULTATS DU CALCUL
+============================================================
+
+POINT D'OBSERVATION :
+  Position : 48.858400°N, 2.294500°E
+  Heure : 2025-12-20 01:37:39
+  
+
+DONNÉES DE VOL :
+  Direction : NE (45.0°)
+  Temps d'aller-retour : 390s (6.50min)
+
+============================================================
+📍 MÉTHODE EMPIRIQUE (RECOMMANDÉE - Vespawatchers)
+============================================================
+  Formule : 100 mètres = 1 minute aller-retour
+
+  Distance calculée : 650 meters
+                       (0.65 km)
+
+  📌 POSITION ESTIMÉE DU NID :
+     Coordonnées : 48.862533°N, 2.300783°E
+
+     Cap depuis votre position : NE (45.0°)
+
+     Rayon de confiance : ±113 meters
+     (C'est votre zone de recherche - cercle rouge sur la carte)
+
+  🗺️  COORDONNÉES GPS POUR NAVIGATION :
+     48.862533, 2.300783
+
+  Google Maps :
+  https://www.google.com/maps?q=48.862533285956545,2.300783110646705
+
+  ⚠️  Note : En pratique, le nid est souvent légèrement plus loin que calculé
+
+============================================================
+🗺️ INFORMATIONS CARTE
+============================================================
+  Carte interactive ouverte dans votre navigateur.
+  Carte sauvegardée : hornet_map_20251220_013739.html
+
+  Éléments de la carte :
+🔵 Marqueur bleu = Votre point d'observation
+🔴 Marqueur rouge = Position estimée du nid
+⭕ Cercle rouge = Zone de recherche (±113.1785240380051m)
+➡️ Ligne bleue = Direction du vol
+--- Pointillés rouges = Trajet du vol
+
+  Actions :
+• Zoomer avec la molette de la souris
+• Cliquer sur les marqueurs pour les détails
+• Cliquer sur "Voir la Carte" pour rouvrir
+• Cliquer sur "Imprimer" pour imprimer
+
+============================================================
+⚠️  PROCHAINES ÉTAPES & SÉCURITÉ
+============================================================
+  Équipement :
+✓ Jumelles 8×42 (ESSENTIEL !)
+✓ Pot à mèche, marqueurs, filet à papillons
+
+  Recherche :
+✓ Naviguer vers la zone du cercle rouge
+✓ Vérifier arbres, cabanes, sol, haies
+✓ Scanner avec les jumelles
+
+  Sécurité :
+✓ NE JAMAIS approcher seul
+✓ Utiliser des protections
+✓ Contacter des professionnels
+✓ Signaler : vespawatch.be
+============================================================
+
+
+
+Interactive map file: /home/jeremy/my-python-project/maps/hornet_map_20251220_013739.html

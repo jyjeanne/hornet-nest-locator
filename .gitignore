@@ -1,0 +1,81 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# UV
+.uv/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Project specific
+hornet_observation_*.txt
+hornet_map*.html
+vespa_observation_*.txt
+vespa_map*.html
+example_*.html
+maps/
+*.kml
+*.gpx
+
+# Backup files
+*_backup.py
+*_before_*.py
+
+# User data
+observations/
+data/
+
+# Ruff
+.ruff_cache/
+
+# PyInstaller
+build/
+dist/
+*.spec.bak
+*.manifest
+*.exe
+*.app/

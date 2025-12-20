@@ -1,0 +1,23 @@
+# Hornet Nest Locator - Production Requirements
+# This file lists all Python dependencies required for the application
+
+# Core dependencies
+vespa-finder==0.3.0
+
+# GUI dependencies
+folium==0.14.0
+
+# Testing dependencies (not included in production build)
+pytest==8.0.0
+
+# Linting and formatting dependencies
+ruff==0.4.4
+
+# Build dependencies (not included in production build)
+pyinstaller==6.7.0
+
+# Geographic and scientific libraries
+geopy==2.4.1
+
+# HTTP and API libraries
+requests==2.31.0
