@@ -77,6 +77,10 @@ class HornetLocatorGUI:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.current_lang = "en"  # Default language
+
+        # Cache for translations to improve performance (initialize early)
+        self._translation_cache: dict[str, str] = {}
+
         self.root.title(self.t("window_title"))
 
         # Responsive window sizing based on screen resolution
@@ -109,9 +113,6 @@ class HornetLocatorGUI:
         # Store references to all labels and buttons for language switching
         self.labels = {}
         self.buttons = {}
-
-        # Cache for translations to improve performance
-        self._translation_cache: dict[str, str] = {}
 
         self.create_widgets()
 
