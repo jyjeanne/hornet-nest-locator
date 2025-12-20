@@ -2,14 +2,17 @@ name: Build Executables
 
 on:
   push:
+    branches: [main, master]
     tags:
-      - 'v*'
+      - "v*"
+  pull_request:
+    branches: [main, master]
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag (e.g., v0.3.0)'
+        description: "Version tag (e.g., v0.3.0)"
         required: false
-        default: 'dev'
+        default: "dev"
 
 env:
   PYTHON_VERSION: "3.12"
@@ -25,12 +28,15 @@ jobs:
           - os: ubuntu-latest
             artifact_name: VespaFinder-Linux
             asset_name: VespaFinder-Linux-x86_64
+            executable_ext: ""
           - os: macos-latest
             artifact_name: VespaFinder-macOS
             asset_name: VespaFinder-macOS-x86_64
+            executable_ext: ""
           - os: windows-latest
             artifact_name: VespaFinder-Windows
-            asset_name: VespaFinder-Windows-x86_64.exe
+            asset_name: VespaFinder-Windows-x86_64
+            executable_ext: ".exe"
 
     steps:
       - name: Checkout code
@@ -45,7 +51,9 @@ jobs:
         run: uv python install ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        run: uv sync --dev
+        run: |
+          uv sync --dev
+          uv pip install pyinstaller
 
       - name: Run tests
         run: uv run pytest tests/ -v --tb=short
@@ -62,16 +70,15 @@ jobs:
           uv run pyinstaller vespa_finder.spec
           dir dist\
 
-      - name: Rename artifact (Linux)
+      - name: Prepare artifact (Linux)
         if: runner.os == 'Linux'
         run: |
           mv dist/VespaFinder dist/${{ matrix.asset_name }}
           chmod +x dist/${{ matrix.asset_name }}
 
-      - name: Rename artifact (macOS)
+      - name: Prepare artifact (macOS)
         if: runner.os == 'macOS'
         run: |
-          # For macOS, create a zip of the app bundle if it exists, otherwise rename the binary
           if [ -d "dist/VespaFinder.app" ]; then
             cd dist && zip -r ${{ matrix.asset_name }}.zip VespaFinder.app
           else
@@ -79,19 +86,84 @@ jobs:
             chmod +x dist/${{ matrix.asset_name }}
           fi
 
-      - name: Rename artifact (Windows)
+      - name: Prepare artifact (Windows)
         if: runner.os == 'Windows'
         run: |
-          move dist\VespaFinder.exe dist\${{ matrix.asset_name }}
+          move dist\VespaFinder.exe dist\${{ matrix.asset_name }}.exe
 
-      - name: Upload artifact
+      - name: Create portable package (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $outputDir = "dist/portable"
+          New-Item -ItemType Directory -Path $outputDir -Force
+
+          Copy-Item "dist/${{ matrix.asset_name }}.exe" "$outputDir/"
+
+          if (Test-Path "assets") {
+            Copy-Item -Path "assets/*" -Destination "$outputDir/" -Recurse -ErrorAction SilentlyContinue
+          }
+          if (Test-Path "docs/GUI_GUIDE.md") {
+            Copy-Item "docs/GUI_GUIDE.md" "$outputDir/"
+          }
+          if (Test-Path "README.md") {
+            Copy-Item "README.md" "$outputDir/"
+          }
+
+          @"
+          @echo off
+          start "" "${{ matrix.asset_name }}.exe"
+          "@ | Out-File "$outputDir/launch.bat" -Encoding ASCII
+
+          Compress-Archive -Path "$outputDir/*" -DestinationPath "dist/${{ matrix.asset_name }}-portable.zip" -Force
+
+      - name: Create portable package (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p dist/portable
+          cp dist/${{ matrix.asset_name }} dist/portable/
+          [ -d "assets" ] && cp -r assets/* dist/portable/ || true
+          [ -f "docs/GUI_GUIDE.md" ] && cp docs/GUI_GUIDE.md dist/portable/ || true
+          [ -f "README.md" ] && cp README.md dist/portable/ || true
+
+          echo '#!/bin/bash' > dist/portable/launch.sh
+          echo './${{ matrix.asset_name }}' >> dist/portable/launch.sh
+          chmod +x dist/portable/launch.sh
+
+          cd dist && tar -czvf ${{ matrix.asset_name }}-portable.tar.gz portable/*
+
+      - name: Create portable package (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p dist/portable
+          if [ -d "dist/VespaFinder.app" ]; then
+            cp -r dist/VespaFinder.app dist/portable/
+          else
+            cp dist/${{ matrix.asset_name }} dist/portable/
+          fi
+          [ -d "assets" ] && cp -r assets/* dist/portable/ || true
+          [ -f "docs/GUI_GUIDE.md" ] && cp docs/GUI_GUIDE.md dist/portable/ || true
+          [ -f "README.md" ] && cp README.md dist/portable/ || true
+
+          cd dist && zip -r ${{ matrix.asset_name }}-portable.zip portable/*
+
+      - name: Upload executable artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
           path: |
-            dist/${{ matrix.asset_name }}
+            dist/${{ matrix.asset_name }}${{ matrix.executable_ext }}
             dist/${{ matrix.asset_name }}.zip
-          if-no-files-found: error
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload portable package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}-portable
+          path: |
+            dist/${{ matrix.asset_name }}-portable.zip
+            dist/${{ matrix.asset_name }}-portable.tar.gz
+          if-no-files-found: warn
           retention-days: 30
 
   release:
@@ -123,21 +195,27 @@ jobs:
 
             ### Downloads
 
-            | Platform | Download |
-            |----------|----------|
-            | 🐧 Linux | `VespaFinder-Linux-x86_64` |
-            | 🍎 macOS | `VespaFinder-macOS-x86_64` |
-            | 🪟 Windows | `VespaFinder-Windows-x86_64.exe` |
+            | Platform | Executable | Portable Package |
+            |----------|------------|------------------|
+            | 🐧 Linux | `VespaFinder-Linux-x86_64` | `VespaFinder-Linux-x86_64-portable.tar.gz` |
+            | 🍎 macOS | `VespaFinder-macOS-x86_64` | `VespaFinder-macOS-x86_64-portable.zip` |
+            | 🪟 Windows | `VespaFinder-Windows-x86_64.exe` | `VespaFinder-Windows-x86_64-portable.zip` |
 
             ### Installation
 
+            **Standalone Executable:**
             1. Download the executable for your platform
             2. **Linux/macOS**: Make it executable with `chmod +x VespaFinder-*`
             3. Run the application
 
+            **Portable Package:**
+            1. Download and extract the portable package
+            2. Includes documentation and assets
+            3. Run `launch.sh` (Linux/macOS) or `launch.bat` (Windows)
+
             ### What's New
 
-            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/master/docs/CHANGELOG.md) for details.
 
             ---
 
