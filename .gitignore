@@ -79,3 +79,4 @@ dist/
 *.manifest
 *.exe
 *.app/
+build_output.log

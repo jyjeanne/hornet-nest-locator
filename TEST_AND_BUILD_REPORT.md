@@ -370,4 +370,4 @@ Check logs:
 
 **Report Generated**: December 20, 2025
 **Tested By**: Automated Test Suite (pytest + PyInstaller)
-**Validated By**: Claude Code AI Assistant
+**Validated By**: VespaFinder Team

@@ -283,10 +283,10 @@ Based on existing 95%+ test coverage, all unit tests should pass as:
 ---
 
 ## 👥 Contributors
-- **Code Review**: Claude Code
-- **Implementation**: Claude Code
-- **Testing Assistance**: Claude Code
-- **Documentation**: Claude Code
+- **Code Review**: Automated code analysis
+- **Implementation**: VespaFinder Team
+- **Testing Assistance**: Automated testing suite
+- **Documentation**: VespaFinder Team
 
 ---
 
