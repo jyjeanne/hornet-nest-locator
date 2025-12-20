@@ -3,6 +3,9 @@
 import math
 from typing import Tuple
 
+# Earth's radius in meters (WGS84 mean radius)
+EARTH_RADIUS_METERS = 6371000.0
+
 
 def destination_point(lat: float, lon: float, bearing: float, distance: float) -> Tuple[float, float]:
     """
@@ -19,16 +22,13 @@ def destination_point(lat: float, lon: float, bearing: float, distance: float) -
     Returns:
         Tuple of (destination_latitude, destination_longitude) in degrees
     """
-    # Earth's radius in meters
-    R = 6371000.0
-    
     # Convert to radians
     lat1 = math.radians(lat)
     lon1 = math.radians(lon)
     bearing_rad = math.radians(bearing)
-    
+
     # Angular distance in radians
-    angular_distance = distance / R
+    angular_distance = distance / EARTH_RADIUS_METERS
     
     # Calculate destination point
     lat2 = math.asin(
@@ -62,9 +62,6 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     Returns:
         Distance in meters
     """
-    # Earth's radius in meters
-    R = 6371000.0
-    
     # Convert to radians
     lat1_rad = math.radians(lat1)
     lat2_rad = math.radians(lat2)
@@ -77,9 +74,9 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
          math.sin(delta_lon / 2) ** 2)
     
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    
-    distance = R * c
-    
+
+    distance = EARTH_RADIUS_METERS * c
+
     return distance
 
 

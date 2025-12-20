@@ -4,26 +4,39 @@ VespaFinder - Beautiful GUI Application
 Professional methodology by Vespawatchers
 """
 
+import logging
 import os
 import tkinter as tk
+import traceback
 import webbrowser
 from datetime import datetime
 from tkinter import messagebox, scrolledtext, ttk
+from typing import Optional
 
 from vespa_finder import HiveCalculator, Observation
 from vespa_finder.geo_utils import format_bearing, format_coordinates
+from vespa_finder.models import HiveLocation
 from vespa_finder.simple_map import SimpleMapGenerator
 from vespa_finder.translations import get_text
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 class ScrollableFrame(ttk.Frame):
     """A scrollable frame container."""
 
-    def __init__(self, container, *args, **kwargs):
+    def __init__(self, container: ttk.Widget, *args, **kwargs) -> None:
         super().__init__(container, *args, **kwargs)
 
         canvas = tk.Canvas(self, borderwidth=0, background="#f0f0f0")
+        # Create scrollbar with explicit width for better visibility
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        # Note: ttk.Scrollbar width is controlled by the theme, but we configure the style
         self.scrollable_frame = ttk.Frame(canvas)
 
         self.scrollable_frame.bind(
@@ -41,14 +54,14 @@ class ScrollableFrame(ttk.Frame):
 
         self.canvas = canvas
 
-    def _bind_mousewheel(self, canvas):
+    def _bind_mousewheel(self, canvas: tk.Canvas) -> None:
         canvas.bind_all(
             "<MouseWheel>", lambda e: canvas.yview_scroll(int(-1 * (e.delta / 120)), "units")
         )
         canvas.bind_all("<Button-4>", lambda e: canvas.yview_scroll(-1, "units"))
         canvas.bind_all("<Button-5>", lambda e: canvas.yview_scroll(1, "units"))
 
-    def _unbind_mousewheel(self, canvas):
+    def _unbind_mousewheel(self, canvas: tk.Canvas) -> None:
         canvas.unbind_all("<MouseWheel>")
         canvas.unbind_all("<Button-4>")
         canvas.unbind_all("<Button-5>")
@@ -57,11 +70,29 @@ class ScrollableFrame(ttk.Frame):
 class HornetLocatorGUI:
     """Beautiful GUI for Hornet Nest Locator."""
 
-    def __init__(self, root):
+    # Widget width standards for consistent UI
+    ENTRY_WIDTH_STANDARD = 20  # Standard width for most entry fields
+    ENTRY_WIDTH_SMALL = 10     # For numeric inputs like minutes, seconds, speed
+
+    def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.current_lang = "en"  # Default language
         self.root.title(self.t("window_title"))
-        self.root.geometry("1000x1000")
+
+        # Responsive window sizing based on screen resolution
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+
+        # Use 70% of screen width and 80% of screen height, with min/max constraints
+        window_width = max(900, min(1400, int(screen_width * 0.7)))
+        window_height = max(800, min(1200, int(screen_height * 0.8)))
+
+        # Center window on screen
+        x_position = (screen_width - window_width) // 2
+        y_position = (screen_height - window_height) // 2
+
+        self.root.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
+        self.root.minsize(900, 800)  # Set minimum window size
 
         self.setup_styles()
 
@@ -79,18 +110,26 @@ class HornetLocatorGUI:
         self.labels = {}
         self.buttons = {}
 
+        # Cache for translations to improve performance
+        self._translation_cache: dict[str, str] = {}
+
         self.create_widgets()
 
-    def t(self, key):
-        """Get translated text for current language."""
-        return get_text(self.current_lang, key)
+    def t(self, key: str) -> str:
+        """Get translated text for current language with caching."""
+        cache_key = f"{self.current_lang}:{key}"
+        if cache_key not in self._translation_cache:
+            self._translation_cache[cache_key] = get_text(self.current_lang, key)
+        return self._translation_cache[cache_key]
 
-    def switch_language(self):
+    def switch_language(self) -> None:
         """Switch between English and French."""
         self.current_lang = "fr" if self.current_lang == "en" else "en"
+        # Clear translation cache when switching languages
+        self._translation_cache.clear()
         self.update_all_labels()
 
-    def update_all_labels(self):
+    def update_all_labels(self) -> None:
         """Update all text labels and buttons when language changes."""
         # Update window title
         self.root.title(self.t("window_title"))
@@ -146,7 +185,7 @@ class HornetLocatorGUI:
         if not self.observations:
             self.update_initial_results_text()
 
-    def update_initial_results_text(self):
+    def update_initial_results_text(self) -> None:
         """Update the initial help text in the results panel."""
         self.results_text.config(state="normal")
         self.results_text.delete("1.0", tk.END)
@@ -245,7 +284,7 @@ class HornetLocatorGUI:
         self.results_text.insert("1.0", initial_text)
         self.results_text.config(state="disabled")
 
-    def setup_styles(self):
+    def setup_styles(self) -> None:
         """Configure modern styles."""
         style = ttk.Style()
         style.theme_use("clam")
@@ -262,7 +301,10 @@ class HornetLocatorGUI:
         style.configure("Calculate.TButton", font=("Arial", 12, "bold"), padding=10)
         style.configure("Action.TButton", font=("Arial", 10), padding=5)
 
-    def create_widgets(self):
+        # Configure scrollbar for better visibility
+        style.configure("Vertical.TScrollbar", arrowsize=15, width=16)
+
+    def create_widgets(self) -> None:
         """Create all GUI widgets."""
         main_frame = ttk.Frame(self.root, padding="10")
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
@@ -278,7 +320,7 @@ class HornetLocatorGUI:
         self.create_input_panel(main_frame)
         self.create_results_panel(main_frame)
 
-    def create_header(self, parent):
+    def create_header(self, parent: ttk.Frame) -> None:
         """Create header section."""
         header_frame = ttk.Frame(parent)
         header_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 10))
@@ -306,7 +348,7 @@ class HornetLocatorGUI:
         )
         self.labels["subtitle"].grid(row=1, column=0, columnspan=2, sticky=tk.W)
 
-    def create_input_panel(self, parent):
+    def create_input_panel(self, parent: ttk.Frame) -> None:
         """Create input form panel with scrollbar."""
         self.input_labelframe = ttk.LabelFrame(
             parent, text=f"📍 {self.t('input_panel_title')}", padding="5"
@@ -330,14 +372,14 @@ class HornetLocatorGUI:
 
         self.labels["latitude"] = ttk.Label(input_frame, text=self.t("latitude"))
         self.labels["latitude"].grid(row=row, column=0, sticky=tk.W, pady=5)
-        self.lat_entry = ttk.Entry(input_frame, width=20)
+        self.lat_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_STANDARD)
         self.lat_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
         self.lat_entry.insert(0, "48.8584")
         row += 1
 
         self.labels["longitude"] = ttk.Label(input_frame, text=self.t("longitude"))
         self.labels["longitude"].grid(row=row, column=0, sticky=tk.W, pady=5)
-        self.lon_entry = ttk.Entry(input_frame, width=20)
+        self.lon_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_STANDARD)
         self.lon_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
         self.lon_entry.insert(0, "2.2945")
         row += 1
@@ -367,7 +409,7 @@ class HornetLocatorGUI:
 
         self.labels["bearing"] = ttk.Label(input_frame, text=self.t("bearing"))
         self.labels["bearing"].grid(row=row, column=0, sticky=tk.W, pady=5)
-        self.bearing_entry = ttk.Entry(input_frame, width=15)
+        self.bearing_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
         self.bearing_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
         self.bearing_entry.insert(0, "45")
         row += 1
@@ -400,14 +442,14 @@ class HornetLocatorGUI:
 
         self.labels["minutes"] = ttk.Label(input_frame, text=self.t("minutes"))
         self.labels["minutes"].grid(row=row, column=0, sticky=tk.W, pady=5)
-        self.minutes_entry = ttk.Entry(input_frame, width=10)
+        self.minutes_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
         self.minutes_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         self.minutes_entry.insert(0, "6")
         row += 1
 
         self.labels["seconds"] = ttk.Label(input_frame, text=self.t("seconds"))
         self.labels["seconds"].grid(row=row, column=0, sticky=tk.W, pady=5)
-        self.seconds_entry = ttk.Entry(input_frame, width=10)
+        self.seconds_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
         self.seconds_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         self.seconds_entry.insert(0, "30")
         row += 1
@@ -428,13 +470,13 @@ class HornetLocatorGUI:
 
         self.labels["hornet_mark"] = ttk.Label(input_frame, text=self.t("hornet_mark"))
         self.labels["hornet_mark"].grid(row=row, column=0, sticky=tk.W, pady=5)
-        self.color_entry = ttk.Entry(input_frame, width=20)
+        self.color_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_STANDARD)
         self.color_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
         row += 1
 
         self.labels["speed"] = ttk.Label(input_frame, text=self.t("speed"))
         self.labels["speed"].grid(row=row, column=0, sticky=tk.W, pady=5)
-        self.speed_entry = ttk.Entry(input_frame, width=10)
+        self.speed_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
         self.speed_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         row += 1
 
@@ -501,7 +543,7 @@ class HornetLocatorGUI:
         ttk.Label(input_frame, text="").grid(row=row, column=0, pady=20)
         input_frame.columnconfigure(1, weight=1)
 
-    def create_results_panel(self, parent):
+    def create_results_panel(self, parent: ttk.Frame) -> None:
         """Create results display panel with scrollbar."""
         self.results_labelframe = ttk.LabelFrame(
             parent, text=f"📊 {self.t('results_panel_title')}", padding="10"
@@ -511,18 +553,18 @@ class HornetLocatorGUI:
         self.results_labelframe.columnconfigure(0, weight=1)
 
         self.results_text = scrolledtext.ScrolledText(
-            self.results_labelframe, width=60, height=35, wrap=tk.WORD, font=("Courier", 9)
+            self.results_labelframe, width=60, height=35, wrap=tk.WORD, font=("Courier", 10)
         )
         self.results_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
         self.update_initial_results_text()
 
-    def open_gps_help(self):
+    def open_gps_help(self) -> None:
         """Open Google Maps for GPS coordinates."""
         webbrowser.open("https://www.google.com/maps")
         messagebox.showinfo(self.t("gps_help_title"), self.t("gps_help_message"))
 
-    def calculate_location(self):
+    def calculate_location(self) -> None:
         """Calculate hive location from input data."""
         try:
             latitude = float(self.lat_entry.get())
@@ -564,20 +606,29 @@ class HornetLocatorGUI:
                 self.t("success_title"),
                 self.t("success_message").format(filename=os.path.basename(self.current_map_file)),
             )
+            logger.info(f"Successfully calculated hive location and generated map: {self.current_map_file}")
 
         except ValueError as e:
+            logger.error(f"Validation error in calculate_location: {e}")
             messagebox.showerror(
                 self.t("error_title"), self.t("error_message").format(error=str(e))
             )
+        except (OSError, IOError) as e:
+            logger.error(f"File I/O error in calculate_location: {e}")
+            messagebox.showerror(
+                "File Error",
+                f"Failed to create or save map file: {e}"
+            )
         except Exception as e:
+            logger.exception(f"Unexpected error in calculate_location: {e}")
             messagebox.showerror(
                 self.t("calc_error_title"), self.t("calc_error_message").format(error=str(e))
             )
-            import traceback
-
             traceback.print_exc()
 
-    def display_results(self, observation, hive_empirical, speed):
+    def display_results(
+        self, observation: Observation, hive_empirical: HiveLocation, speed: Optional[float]
+    ) -> None:
         """Display calculation results."""
         self.results_text.config(state="normal")
         self.results_text.delete("1.0", tk.END)
@@ -666,7 +717,9 @@ class HornetLocatorGUI:
         self.results_text.insert("1.0", output)
         self.results_text.config(state="disabled")
 
-    def generate_and_open_map(self, observation, hive_location):
+    def generate_and_open_map(
+        self, observation: Observation, hive_location: HiveLocation
+    ) -> None:
         """Generate interactive map and open in browser."""
         try:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -678,28 +731,31 @@ class HornetLocatorGUI:
                 output_file=self.current_map_file,
             )
 
-            print(f"✅ Map created: {self.current_map_file}")
-            print(f"✅ File exists: {os.path.exists(self.current_map_file)}")
-
             # Open in browser
             webbrowser.open("file://" + os.path.abspath(self.current_map_file))
+            logger.info(f"Map generated and opened: {self.current_map_file}")
 
+        except (OSError, IOError) as e:
+            logger.error(f"File I/O error generating map: {e}")
+            messagebox.showerror(
+                "Map Generation Error",
+                f"Failed to create map file: {e}"
+            )
         except Exception as e:
+            logger.exception(f"Unexpected error generating map: {e}")
             messagebox.showerror(
                 self.t("map_error_title"), self.t("map_error_message").format(error=str(e))
             )
-            import traceback
-
             traceback.print_exc()
 
-    def view_map(self):
+    def view_map(self) -> None:
         """Open/reopen map in browser."""
         if self.current_map_file and os.path.exists(self.current_map_file):
             webbrowser.open("file://" + os.path.abspath(self.current_map_file))
         else:
             messagebox.showwarning(self.t("no_map_title"), self.t("no_map_message"))
 
-    def print_map(self):
+    def print_map(self) -> None:
         """Print the map."""
         if self.current_map_file and os.path.exists(self.current_map_file):
             webbrowser.open("file://" + os.path.abspath(self.current_map_file))
@@ -707,7 +763,7 @@ class HornetLocatorGUI:
         else:
             messagebox.showwarning(self.t("no_map_title"), self.t("no_map_message"))
 
-    def save_report(self):
+    def save_report(self) -> None:
         """Save results to file."""
         if not self.observations:
             messagebox.showwarning(self.t("no_data_title"), self.t("no_data_message"))
@@ -725,12 +781,19 @@ class HornetLocatorGUI:
             messagebox.showinfo(
                 self.t("saved_title"), self.t("saved_message").format(filename=filename)
             )
+            logger.info(f"Report saved to: {filename}")
+        except (OSError, IOError, PermissionError) as e:
+            logger.error(f"File I/O error saving report: {e}")
+            messagebox.showerror(
+                self.t("save_error_title"), self.t("save_error_message").format(error=str(e))
+            )
         except Exception as e:
+            logger.exception(f"Unexpected error saving report: {e}")
             messagebox.showerror(
                 self.t("save_error_title"), self.t("save_error_message").format(error=str(e))
             )
 
-    def clear_form(self):
+    def clear_form(self) -> None:
         """Clear the input form."""
         self.bearing_entry.delete(0, tk.END)
         self.minutes_entry.delete(0, tk.END)
@@ -744,7 +807,7 @@ class HornetLocatorGUI:
         self.seconds_entry.insert(0, "30")
 
 
-def main():
+def main() -> None:
     """Launch the GUI application."""
     root = tk.Tk()
     app = HornetLocatorGUI(root)

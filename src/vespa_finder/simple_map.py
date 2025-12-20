@@ -16,6 +16,10 @@ class MapGenerationError(Exception):
 class SimpleMapGenerator:
     """Generate simple HTML maps using Leaflet.js with embedded tiles."""
 
+    # Map display constants
+    FLIGHT_DIRECTION_ARROW_LENGTH_METERS = 100  # Length of flight direction arrow on map
+    MAP_BOUNDS_PADDING = 0.005  # Padding around map bounds in degrees
+
     def create_simple_map(
         self,
         observations: List[Observation],
@@ -50,10 +54,10 @@ class SimpleMapGenerator:
             all_lats.append(hive.latitude)
             all_lons.append(hive.longitude)
 
-        min_lat = min(all_lats) - 0.005
-        max_lat = max(all_lats) + 0.005
-        min_lon = min(all_lons) - 0.005
-        max_lon = max(all_lons) + 0.005
+        min_lat = min(all_lats) - self.MAP_BOUNDS_PADDING
+        max_lat = max(all_lats) + self.MAP_BOUNDS_PADDING
+        min_lon = min(all_lons) - self.MAP_BOUNDS_PADDING
+        max_lon = max(all_lons) + self.MAP_BOUNDS_PADDING
 
         # Calculate center point
         center_lat = (min_lat + max_lat) / 2
@@ -206,7 +210,9 @@ class SimpleMapGenerator:
 
     def _get_arrow_endpoint(self, obs: Observation) -> str:
         """Calculate arrow endpoint coordinates."""
-        arrow_lat, arrow_lon = destination_point(obs.latitude, obs.longitude, obs.bearing, 100)
+        arrow_lat, arrow_lon = destination_point(
+            obs.latitude, obs.longitude, obs.bearing, self.FLIGHT_DIRECTION_ARROW_LENGTH_METERS
+        )
         return f"{arrow_lat}, {arrow_lon}"
 
     def _generate_hive_locations_js(

@@ -21,6 +21,9 @@ class HiveCalculator:
     BEARING_UNCERTAINTY = 10.0  # ±10 degrees
     TIME_UNCERTAINTY = 5.0  # ±5 seconds
 
+    # Minimum confidence radius (Vespawatchers note: "nest often slightly further than calculated")
+    MIN_CONFIDENCE_RADIUS_METERS = 50.0
+
     def calculate_from_single_observation(
         self, observation: Observation, method: str = "empirical"
     ) -> HiveLocation:
@@ -180,6 +183,5 @@ class HiveCalculator:
         # Combined uncertainty (Pythagorean)
         total_uncertainty = math.sqrt(time_error_meters**2 + bearing_uncertainty_m**2)
 
-        # Minimum confidence of 50m
-        # Note from Vespawatchers: "nest often slightly further than calculated"
-        return max(50.0, total_uncertainty)
+        # Apply minimum confidence radius
+        return max(self.MIN_CONFIDENCE_RADIUS_METERS, total_uncertainty)

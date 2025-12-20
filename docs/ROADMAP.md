@@ -87,6 +87,67 @@ This roadmap outlines the planned development for the Hornet Nest Locator projec
 - **Automated Reporting**: Direct submission to wildlife agencies
 - **Alert System**: Nest detection alerts for local authorities
 
+#### v0.8.0 - Mobile Applications (Android & iOS)
+- **Android App (Kivy Framework)**: Native Android application built with Kivy
+  - GPS integration with live location tracking
+  - Built-in compass for bearing measurement
+  - Integrated stopwatch/chronometer
+  - Camera integration for hornet marking documentation
+  - Offline map caching for field work without internet
+  - Voice notes for hands-free observation recording
+  - Automatic data sync with desktop application
+  - Material Design UI following Android guidelines
+  - Support for Android 8.0+ (API level 26+)
+  - APK generation with Buildozer
+  - Google Play Store deployment
+
+- **Cross-Platform Mobile Features**:
+  - Real-time GPS coordinate display
+  - Digital compass with 0-360° bearing display
+  - High-precision timer for round-trip measurements
+  - Photo annotation with timestamp and GPS metadata
+  - Bluetooth connectivity for external GPS devices
+  - Vibration feedback for timer start/stop
+  - Dark mode support for field use
+  - Gesture controls (swipe, pinch-to-zoom on maps)
+  - Offline functionality with local data storage
+  - Cloud backup and multi-device synchronization
+
+- **Mobile-Specific Enhancements**:
+  - Simplified one-handed operation
+  - Large touch targets for field use with gloves
+  - Auto-brightness adjustment for outdoor visibility
+  - Battery optimization for extended field sessions
+  - Location-based automatic observation naming
+  - Quick share feature to send data to team members
+  - Integration with phone's notification system
+  - AR (Augmented Reality) compass overlay (future enhancement)
+
+- **Technical Stack**:
+  - **Framework**: Kivy 2.3.0+ for cross-platform development
+  - **Build Tool**: Buildozer for Android packaging
+  - **Languages**: Python 3.12+ with Cython compilation
+  - **Database**: SQLite for local data storage
+  - **Maps**: Folium/Leaflet.js in WebView or native map libraries
+  - **GPS**: Android Location Services API
+  - **Camera**: Android Camera2 API
+  - **Sensors**: Accelerometer, magnetometer, gyroscope
+
+- **Development Phases**:
+  - **Phase 1**: Core Kivy UI development (2 months)
+  - **Phase 2**: GPS and sensor integration (1 month)
+  - **Phase 3**: Map and navigation features (1 month)
+  - **Phase 4**: Camera and media handling (1 month)
+  - **Phase 5**: Testing and optimization (1 month)
+  - **Phase 6**: Play Store submission and release (0.5 months)
+
+- **iOS Considerations** (Post-Android):
+  - Kivy supports iOS through Xcode toolchain
+  - Similar feature set with iOS-specific adaptations
+  - TestFlight beta testing program
+  - App Store submission and review
+  - Estimated timeline: +3 months after Android release
+
 ### 🌟 Long-term Vision (1-3 years)
 
 #### v1.0.0 - Comprehensive Conservation Platform
@@ -163,7 +224,8 @@ This roadmap outlines the planned development for the Hornet Nest Locator projec
 2025 Q3-Q4: v0.5.0 - Advanced Features
 2026 Q1-Q2: v0.6.0 - Community & Collaboration
 2026 Q3-Q4: v0.7.0 - Professional Tools
-2027: v1.0.0 - Comprehensive Conservation Platform
+2027 Q1-Q2: v0.8.0 - Mobile Applications (Android via Kivy)
+2027 Q3: v1.0.0 - Comprehensive Conservation Platform
 2028-2029: v2.0.0 - Expanded Species Support
 ```
 
@@ -194,8 +256,11 @@ This roadmap outlines the planned development for the Hornet Nest Locator projec
 - Help with bug fixes and feature development
 - Improve documentation and examples
 - Create plugins and extensions
-- Develop mobile applications
+- **Help develop Android app with Kivy** (v0.8.0 milestone)
+- Test mobile builds on various Android devices
+- Optimize Kivy UI/UX for touch interfaces
 - Build integrations with other systems
+- Contribute to Buildozer packaging scripts
 
 ### 🌍 For Conservationists
 - Submit accurate observation data
@@ -224,6 +289,7 @@ This roadmap outlines the planned development for the Hornet Nest Locator projec
 - **v0.5.0**: Advanced features and real-time tracking
 - **v0.6.0**: Community collaboration features
 - **v0.7.0**: Professional tools and API
+- **v0.8.0**: Mobile applications (Android/iOS with Kivy framework)
 - **v1.0.0**: Comprehensive conservation platform
 - **v2.0.0**: Expanded species support
 
