@@ -48,6 +48,8 @@ class ScrollableFrame(ttk.Frame):
 
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
+        # Ensure scrollbar is always visible by setting minimum canvas height
+        canvas.config(height=600)  # Minimum height to ensure scrollbar visibility
 
         self.scrollable_frame.bind("<Enter>", lambda e: self._bind_mousewheel(canvas))
         self.scrollable_frame.bind("<Leave>", lambda e: self._unbind_mousewheel(canvas))
@@ -312,8 +314,8 @@ class HornetLocatorGUI:
 
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
-        main_frame.columnconfigure(0, weight=1)
-        main_frame.columnconfigure(1, weight=2)
+        main_frame.columnconfigure(0, weight=2)  # Make input panel larger
+        main_frame.columnconfigure(1, weight=3)  # Keep results panel slightly larger
         main_frame.rowconfigure(1, weight=1)
         main_frame.rowconfigure(2, weight=1)
 
@@ -350,16 +352,16 @@ class HornetLocatorGUI:
         self.labels["subtitle"].grid(row=1, column=0, columnspan=2, sticky=tk.W)
 
     def create_input_panel(self, parent: ttk.Frame) -> None:
-        """Create input form panel with scrollbar."""
+        """Create input form panel with permanent scrollbar."""
         self.input_labelframe = ttk.LabelFrame(
-            parent, text=f"📍 {self.t('input_panel_title')}", padding="5"
+            parent, text=f"📍 {self.t('input_panel_title')}", padding="10"
         )
         self.input_labelframe.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
         self.input_labelframe.rowconfigure(0, weight=1)
         self.input_labelframe.columnconfigure(0, weight=1)
 
         scrollable = ScrollableFrame(self.input_labelframe)
-        scrollable.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        scrollable.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
 
         input_frame = scrollable.scrollable_frame
         row = 0
