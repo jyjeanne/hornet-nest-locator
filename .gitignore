@@ -53,6 +53,7 @@ dmypy.json
 
 # Project specific
 hornet_observation_*.txt
+hornet_report_*.txt
 hornet_map*.html
 vespa_observation_*.txt
 vespa_map*.html
