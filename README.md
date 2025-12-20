@@ -1,11 +1,11 @@
 # 🐝 Hornet Nest Locator
 
-[![CI Status](https://github.com/YOUR-USERNAME/hornet-nest-locator/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR-USERNAME/hornet-nest-locator/actions/workflows/ci.yml)
-[![Windows Build](https://github.com/YOUR-USERNAME/hornet-nest-locator/actions/workflows/build_windows.yml/badge.svg)](https://github.com/YOUR-USERNAME/hornet-nest-locator/actions/workflows/build_windows.yml)
+[![CI Status](https://github.com/jyjeanne/hornet-nest-locator/actions/workflows/ci.yml/badge.svg)](https://github.com/jyjeanne/hornet-nest-locator/actions/workflows/ci.yml)
+[![Windows Build](https://github.com/jyjeanne/hornet-nest-locator/actions/workflows/build_windows.yml/badge.svg)](https://github.com/jyjeanne/hornet-nest-locator/actions/workflows/build_windows.yml)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Code Style: Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
-[![GitHub Stars](https://img.shields.io/github/stars/YOUR-USERNAME/hornet-nest-locator?style=social)](https://github.com/YOUR-USERNAME/hornet-nest-locator)
+[![GitHub Stars](https://img.shields.io/github/stars/jyjeanne/hornet-nest-locator?style=social)](https://github.com/jyjeanne/hornet-nest-locator)
 
 **🌍 Protect bees by locating invasive Asian hornet nests!**
 
@@ -31,7 +31,7 @@
 pip install hornet-nest-locator
 
 # Or install from source
-git clone https://github.com/YOUR-USERNAME/hornet-nest-locator.git
+git clone https://github.com/jyjeanne/hornet-nest-locator.git
 cd hornet-nest-locator
 pip install -e .
 ```
@@ -617,6 +617,7 @@ pytest tests/ --cov=src/vespa_finder --cov-report=html
 - Input panel includes vertical scrolling for all entry fields
 - Results panel uses `ScrolledText` widget with automatic scrollbar
 - **Tip**: Use mouse wheel or arrow keys for smooth scrolling
+- **New**: Input panel is now larger (40% width) with permanent scrollbar for easier navigation
 
 ## 🛠️ Development
 
