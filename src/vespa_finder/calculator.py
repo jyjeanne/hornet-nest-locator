@@ -1,6 +1,6 @@
 """Calculate hive location from hornet observations."""
 
-from typing import List, Optional
+import math
 
 from .geo_utils import bearing_between_points, destination_point, haversine_distance
 from .models import HiveLocation, Observation
@@ -93,7 +93,7 @@ class HiveCalculator:
         }
 
     def calculate_from_multiple_observations(
-        self, observations: List[Observation], method: str = "empirical"
+        self, observations: list[Observation], method: str = "empirical"
     ) -> HiveLocation:
         """
         Calculate hive location from multiple observations using triangulation.
@@ -163,8 +163,6 @@ class HiveCalculator:
         Returns:
             Confidence radius in meters
         """
-        import math
-
         if method == "empirical":
             # Empirical method: error from timing uncertainty
             # ±5 seconds = ±(5/60) minutes = ±(5/60 * 100) meters

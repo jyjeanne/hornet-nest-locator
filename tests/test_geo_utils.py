@@ -1,9 +1,5 @@
 """Tests for geographic utility functions."""
 
-import math
-
-import pytest
-
 from vespa_finder.geo_utils import (
     bearing_between_points,
     destination_point,

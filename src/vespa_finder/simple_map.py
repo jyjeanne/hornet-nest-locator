@@ -1,7 +1,6 @@
 """Simple standalone HTML map generator that works in embedded browsers."""
 
 import os
-from typing import List
 
 from .geo_utils import destination_point
 from .models import HiveLocation, Observation
@@ -22,8 +21,8 @@ class SimpleMapGenerator:
 
     def create_simple_map(
         self,
-        observations: List[Observation],
-        hive_locations: List[HiveLocation],
+        observations: list[Observation],
+        hive_locations: list[HiveLocation],
         output_file: str,
     ) -> str:
         """
@@ -80,9 +79,9 @@ class SimpleMapGenerator:
             with open(output_file, "w", encoding="utf-8") as f:
                 f.write(html_content)
         except PermissionError as e:
-            raise MapGenerationError(f"Permission denied writing to {output_file}: {e}")
+            raise MapGenerationError(f"Permission denied writing to {output_file}: {e}") from e
         except OSError as e:
-            raise MapGenerationError(f"Failed to write map file {output_file}: {e}")
+            raise MapGenerationError(f"Failed to write map file {output_file}: {e}") from e
 
         return output_file
 
@@ -147,7 +146,7 @@ class SimpleMapGenerator:
         var colors = ['blue', 'green', 'purple', 'orange', 'darkred', 'darkblue', 'darkgreen', 'cadetblue'];
 """
 
-    def _generate_observations_js(self, observations: List[Observation]) -> str:
+    def _generate_observations_js(self, observations: list[Observation]) -> str:
         """Generate JavaScript for observation markers."""
         js = ""
         for i, obs in enumerate(observations):
@@ -216,7 +215,7 @@ class SimpleMapGenerator:
         return f"{arrow_lat}, {arrow_lon}"
 
     def _generate_hive_locations_js(
-        self, observations: List[Observation], hive_locations: List[HiveLocation]
+        self, observations: list[Observation], hive_locations: list[HiveLocation]
     ) -> str:
         """Generate JavaScript for hive location markers."""
         if not hive_locations:

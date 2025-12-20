@@ -1,9 +1,6 @@
 """Wildlife database API integration for reporting hornet observations."""
 
-import json
-import logging
-from typing import Dict, List, Optional, Union
-from urllib.parse import urlencode
+from typing import ClassVar
 
 import requests
 
@@ -24,7 +21,7 @@ class WildlifeReporter:
     """
 
     # Wildlife database endpoints
-    DATABASES = {
+    DATABASES: ClassVar[dict] = {
         "vespawatch": {
             "name": "Vespawatch (Flanders, Belgium)",
             "url": "https://vespawatch.be",
@@ -56,7 +53,7 @@ class WildlifeReporter:
             }
         )
 
-    def get_available_databases(self) -> List[Dict[str, str]]:
+    def get_available_databases(self) -> list[dict[str, str]]:
         """Get list of available wildlife databases."""
         return [
             {
@@ -71,7 +68,7 @@ class WildlifeReporter:
 
     def report_to_vespawatch(
         self, observation: Observation, hive_location: HiveLocation
-    ) -> Dict[str, str]:
+    ) -> dict[str, str]:
         """
         Generate Vespawatch report (website submission only).
 
@@ -89,8 +86,8 @@ class WildlifeReporter:
         }
 
     def report_to_waarneming(
-        self, observation: Observation, hive_location: HiveLocation, api_key: Optional[str] = None
-    ) -> Dict[str, Union[str, bool]]:
+        self, observation: Observation, hive_location: HiveLocation, api_key: str | None = None
+    ) -> dict[str, str | bool]:
         """
         Report to Waarneming.nl API.
 
@@ -132,14 +129,14 @@ class WildlifeReporter:
             }
 
         except requests.exceptions.RequestException as e:
-            raise WildlifeAPIError(f"Failed to submit to Waarneming.nl: {e}")
+            raise WildlifeAPIError(f"Failed to submit to Waarneming.nl: {e}") from e
         finally:
             # Clean up authentication header
             self.session.headers.pop("Authorization", None)
 
     def report_to_observatoire(
         self, observation: Observation, hive_location: HiveLocation
-    ) -> Dict[str, str]:
+    ) -> dict[str, str]:
         """
         Generate Observatoire Biodiversité Wallonie report (website submission only).
 
@@ -158,7 +155,7 @@ class WildlifeReporter:
 
     def _prepare_vespawatch_data(
         self, observation: Observation, hive_location: HiveLocation
-    ) -> Dict[str, str]:
+    ) -> dict[str, str]:
         """Prepare data for Vespawatch submission."""
         return {
             "species": "Vespa velutina (Asian hornet)",
@@ -176,7 +173,7 @@ class WildlifeReporter:
 
     def _prepare_waarneming_data(
         self, observation: Observation, hive_location: HiveLocation
-    ) -> Dict[str, Union[str, int, float]]:
+    ) -> dict[str, str | int | float]:
         """Prepare data for Waarneming.nl API."""
         return {
             "species": "Vespa velutina",
@@ -197,7 +194,7 @@ class WildlifeReporter:
 
     def _prepare_observatoire_data(
         self, observation: Observation, hive_location: HiveLocation
-    ) -> Dict[str, str]:
+    ) -> dict[str, str]:
         """Prepare data for Observatoire Biodiversité Wallonie submission."""
         return {
             "species": "Frelon asiatique (Vespa velutina)",
@@ -215,7 +212,7 @@ class WildlifeReporter:
 
     def generate_combined_report(
         self, observation: Observation, hive_location: HiveLocation
-    ) -> Dict[str, Dict]:
+    ) -> dict[str, dict]:
         """Generate a combined report for all databases."""
         return {
             "vespawatch": self.report_to_vespawatch(observation, hive_location),

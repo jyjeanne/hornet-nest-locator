@@ -97,7 +97,7 @@ Example: 45.764043, 4.835659""",
         "google_maps": "Google Maps:",
         "practice_note": "⚠️  Note: In practice, nest is often slightly further than calculated",
         "theoretical_method": "📊 THEORETICAL METHOD (For Comparison Only)",
-        "theoretical_formula": "Formula: distance = (speed × time) / 2",
+        "theoretical_formula": "Formula: distance = (speed x time) / 2",
         "speed_used": "Speed used:",
         "difference": "Difference from empirical:",
         "recommended_method": "⚠️ Recommended method: EMPIRICAL (100m/min standard)",
@@ -118,7 +118,7 @@ Example: 45.764043, 4.835659""",
 • Click "Print" to print""",
         "next_steps": "⚠️  NEXT STEPS & SAFETY",
         "equipment": """Equipment:
-✓ Binoculars 8×42 (ESSENTIAL!)
+✓ Binoculars 8x42 (ESSENTIAL!)
 ✓ Wick pot, markers, butterfly net""",
         "search": """Search:
 ✓ Navigate to red circle area
@@ -224,7 +224,7 @@ Exemple : 45.764043, 4.835659""",
         "google_maps": "Google Maps :",
         "practice_note": "⚠️  Note : En pratique, le nid est souvent légèrement plus loin que calculé",
         "theoretical_method": "📊 MÉTHODE THÉORIQUE (Pour Comparaison Uniquement)",
-        "theoretical_formula": "Formule : distance = (vitesse × temps) / 2",
+        "theoretical_formula": "Formule : distance = (vitesse x temps) / 2",
         "speed_used": "Vitesse utilisée :",
         "difference": "Différence avec empirique :",
         "recommended_method": "⚠️ Méthode recommandée : EMPIRIQUE (standard 100m/min)",
@@ -245,7 +245,7 @@ Exemple : 45.764043, 4.835659""",
 • Cliquer sur "Imprimer" pour imprimer""",
         "next_steps": "⚠️  PROCHAINES ÉTAPES & SÉCURITÉ",
         "equipment": """Équipement :
-✓ Jumelles 8×42 (ESSENTIEL !)
+✓ Jumelles 8x42 (ESSENTIEL !)
 ✓ Pot à mèche, marqueurs, filet à papillons""",
         "search": """Recherche :
 ✓ Naviguer vers la zone du cercle rouge

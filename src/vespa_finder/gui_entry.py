@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """VespaFinder GUI entry point for PyInstaller."""
+# ruff: noqa: T201, PLC0415
 
 import os
 import sys

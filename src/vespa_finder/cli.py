@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 """VespaFinder CLI entry point."""
-
-import sys
+# ruff: noqa: T201
 
 
 def main():
     """Main entry point for CLI."""
     # Import here to avoid circular imports
-    from . import HiveCalculator, Observation
-    from .geo_utils import format_bearing, format_coordinates
 
     print("╔══════════════════════════════════════════════════════════════╗")
     print("║       VESPAFINDER v0.3.0                                     ║")

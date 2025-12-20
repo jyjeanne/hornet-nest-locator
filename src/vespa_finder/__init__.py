@@ -2,8 +2,8 @@
 
 __version__ = "0.3.0"
 
-from .models import Observation, HiveLocation
 from .calculator import HiveCalculator
-from .wildlife_api import WildlifeReporter, WildlifeAPIError
+from .models import HiveLocation, Observation
+from .wildlife_api import WildlifeAPIError, WildlifeReporter
 
-__all__ = ["Observation", "HiveLocation", "HiveCalculator", "WildlifeReporter", "WildlifeAPIError"]
+__all__ = ["HiveCalculator", "HiveLocation", "Observation", "WildlifeAPIError", "WildlifeReporter"]

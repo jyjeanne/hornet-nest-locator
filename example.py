@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Example usage of the Hornet Nest Locator."""
+# ruff: noqa: T201
 
-from vespa_finder import Observation, HiveCalculator
+from vespa_finder import HiveCalculator, Observation
+from vespa_finder.geo_utils import format_bearing, format_coordinates
 from vespa_finder.visualizer import MapVisualizer
-from vespa_finder.geo_utils import format_coordinates, format_bearing
 
 
 def example_single_observation():
@@ -34,7 +35,7 @@ def example_single_observation():
     calculator = HiveCalculator()
     hive = calculator.calculate_from_single_observation(observation)
 
-    print(f"\n--- CALCULATED HIVE LOCATION ---")
+    print("\n--- CALCULATED HIVE LOCATION ---")
     print(f"Coordinates: {format_coordinates(hive.latitude, hive.longitude)}")
     print(
         f"Distance: {hive.distance_from_observer:.0f}m ({hive.distance_from_observer / 1000:.2f}km)"
@@ -100,14 +101,11 @@ def example_multiple_observations():
     calculator = HiveCalculator()
     hive = calculator.calculate_from_multiple_observations(observations)
 
-    print(f"\n--- TRIANGULATED HIVE LOCATION ---")
+    print("\n--- TRIANGULATED HIVE LOCATION ---")
     print(f"Coordinates: {format_coordinates(hive.latitude, hive.longitude)}")
     print(f"Confidence: ±{hive.confidence_radius:.0f}m")
     print(f"Method: {hive.calculation_method}")
     print(f"Google Maps: https://www.google.com/maps?q={hive.latitude},{hive.longitude}")
-
-    # Calculate individual estimates for comparison
-    individual_hives = [calculator.calculate_from_single_observation(obs) for obs in observations]
 
     # Create map with all observations
     visualizer = MapVisualizer()
@@ -141,8 +139,8 @@ def example_different_speeds():
     print(f"  Observation: {format_coordinates(base_obs['latitude'], base_obs['longitude'])}")
     print(f"  Bearing: {format_bearing(base_obs['bearing'])}")
     print(f"  Round trip: {base_obs['round_trip_time']}s")
-    print(f"\n  Speed | Distance | Hive Location")
-    print(f"  ------|----------|---------------")
+    print("\n  Speed | Distance | Hive Location")
+    print("  ------|----------|---------------")
 
     for speed in speeds:
         obs = Observation(**base_obs, speed=speed)

@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 
 
 @dataclass
@@ -13,10 +12,10 @@ class Observation:
     longitude: float  # -180 to 180
     bearing: float  # 0-360 degrees (0=North, clockwise)
     round_trip_time: float  # seconds
-    speed: Optional[float] = None  # meters per second (optional, for theoretical comparison)
+    speed: float | None = None  # meters per second (optional, for theoretical comparison)
     timestamp: datetime = None
     notes: str = ""
-    hornet_color_mark: Optional[str] = None  # Track individual hornets
+    hornet_color_mark: str | None = None  # Track individual hornets
 
     def __post_init__(self):
         """Validate input data."""
@@ -52,11 +51,11 @@ class Observation:
         return round_trip_minutes * 100.0
 
     @property
-    def estimated_distance_theoretical(self) -> Optional[float]:
+    def estimated_distance_theoretical(self) -> float | None:
         """
         Calculate estimated one-way distance using THEORETICAL METHOD.
 
-        Formula: distance = (speed × time) / 2
+        Formula: distance = (speed x time) / 2
 
         This method is less reliable than the empirical method.
         Only available if speed was provided.

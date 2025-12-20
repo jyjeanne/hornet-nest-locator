@@ -1,10 +1,10 @@
 """Map visualization for hornet observations and hive locations."""
 
 import os
-from typing import List, Optional
 
 import folium
 
+from .geo_utils import destination_point
 from .models import HiveLocation, Observation
 
 
@@ -19,8 +19,8 @@ class MapVisualizer:
 
     def create_map(
         self,
-        observations: List[Observation],
-        hive_locations: List[HiveLocation],
+        observations: list[Observation],
+        hive_locations: list[HiveLocation],
         output_file: str = "hornet_map.html",
     ) -> str:
         """
@@ -55,8 +55,6 @@ class MapVisualizer:
             ).add_to(m)
 
             # Draw arrow showing flight direction
-            from .geo_utils import destination_point
-
             arrow_length = 100  # meters
             arrow_end_lat, arrow_end_lon = destination_point(
                 obs.latitude, obs.longitude, obs.bearing, arrow_length
@@ -116,9 +114,9 @@ class MapVisualizer:
 
             m.save(output_file)
         except PermissionError as e:
-            raise MapGenerationError(f"Permission denied writing to {output_file}: {e}")
+            raise MapGenerationError(f"Permission denied writing to {output_file}: {e}") from e
         except OSError as e:
-            raise MapGenerationError(f"Failed to write map file {output_file}: {e}")
+            raise MapGenerationError(f"Failed to write map file {output_file}: {e}") from e
 
         return output_file
 

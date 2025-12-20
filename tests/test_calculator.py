@@ -1,12 +1,10 @@
 """Tests for HiveCalculator."""
 
-import math
-
 import pytest
 
 from vespa_finder.calculator import HiveCalculator
 from vespa_finder.geo_utils import haversine_distance
-from vespa_finder.models import HiveLocation, Observation
+from vespa_finder.models import Observation
 
 
 class TestHiveCalculatorSingleObservation:

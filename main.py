@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """VespaFinder - CLI interface with professional methodology."""
+# ruff: noqa: T201
 
 import sys
-from datetime import datetime
 
 from vespa_finder import HiveCalculator, Observation
 from vespa_finder.geo_utils import format_bearing, format_coordinates
 
 
-def get_float_input(prompt: str, min_val: float = None, max_val: float = None) -> float:
+def get_float_input(
+    prompt: str, min_val: float | None = None, max_val: float | None = None
+) -> float:
     """Get validated float input from user."""
     while True:
         try:
@@ -109,16 +111,16 @@ def display_results(observation: Observation, calculator: HiveCalculator):
     print("\n" + "=" * 70)
     print("📍 EMPIRICAL METHOD (RECOMMENDED - Vespawatchers Standard)")
     print("=" * 70)
-    print(f"  Formula: 100 meters = 1 minute round trip")
+    print("  Formula: 100 meters = 1 minute round trip")
     print(
         f"  Calculated distance: {hive_empirical.distance_from_observer:.0f} meters ({hive_empirical.distance_from_observer / 1000:.2f} km)"
     )
-    print(f"\n  📌 ESTIMATED HIVE LOCATION:")
+    print("\n  📌 ESTIMATED HIVE LOCATION:")
     print(f"  Coordinates: {format_coordinates(hive_empirical.latitude, hive_empirical.longitude)}")
     print(f"  Bearing from you: {format_bearing(hive_empirical.bearing_from_observer)}")
     print(f"  Confidence: ±{hive_empirical.confidence_radius:.0f} meters")
-    print(f"\n  ⚠️  Note: In practice, nest is often slightly further than calculated")
-    print(f"\n  🗺️  GPS COORDINATES:")
+    print("\n  ⚠️  Note: In practice, nest is often slightly further than calculated")
+    print("\n  🗺️  GPS COORDINATES:")
     print(f"  {hive_empirical.latitude:.6f}, {hive_empirical.longitude:.6f}")
     print(
         f"  Google Maps: https://www.google.com/maps?q={hive_empirical.latitude},{hive_empirical.longitude}"
@@ -132,7 +134,7 @@ def display_results(observation: Observation, calculator: HiveCalculator):
         print("\n" + "=" * 70)
         print("📊 THEORETICAL METHOD (For Comparison Only)")
         print("=" * 70)
-        print(f"  Formula: distance = (speed × time) / 2")
+        print("  Formula: distance = (speed x time) / 2")
         print(f"  Speed used: {observation.speed} m/s ({observation.speed * 3.6:.1f} km/h)")
         print(
             f"  Calculated distance: {hive_theoretical.distance_from_observer:.0f} meters ({hive_theoretical.distance_from_observer / 1000:.2f} km)"
@@ -141,7 +143,7 @@ def display_results(observation: Observation, calculator: HiveCalculator):
             f"  Coordinates: {format_coordinates(hive_theoretical.latitude, hive_theoretical.longitude)}"
         )
 
-        print(f"\n  📊 COMPARISON:")
+        print("\n  📊 COMPARISON:")
         print(
             f"  Difference: {comparison['difference_meters']:.0f} meters ({comparison['difference_percent']:.1f}%)"
         )
@@ -154,7 +156,7 @@ def display_results(observation: Observation, calculator: HiveCalculator):
     print("⚠️  SAFETY WARNING (Vespawatchers Recommendations):")
     print("=" * 70)
     print("  Essential Equipment:")
-    print("  ✓ Binoculars (8×42) - MOST IMPORTANT TOOL")
+    print("  ✓ Binoculars (8x42) - MOST IMPORTANT TOOL")
     print("  ✓ Wick pot with sugar bait")
     print("  ✓ Marking materials (white marker recommended)")
     print("  ✓ Butterfly net (to catch interfering European hornets)")
@@ -197,14 +199,14 @@ def save_to_file(observation: Observation, hive_location):
         f.write(f"  Notes: {observation.notes}\n\n")
 
         f.write("CALCULATED HIVE LOCATION (Empirical Method):\n")
-        f.write(f"  Method: 100m = 1 minute round trip (Vespawatchers standard)\n")
+        f.write("  Method: 100m = 1 minute round trip (Vespawatchers standard)\n")
         f.write(f"  Latitude: {hive_location.latitude}\n")
         f.write(f"  Longitude: {hive_location.longitude}\n")
         f.write(f"  Distance: {hive_location.distance_from_observer} meters\n")
         f.write(f"  Confidence: ±{hive_location.confidence_radius} meters\n")
-        f.write(f"  Note: In practice, nest often slightly further\n\n")
+        f.write("  Note: In practice, nest often slightly further\n\n")
 
-        f.write(f"Google Maps Link:\n")
+        f.write("Google Maps Link:\n")
         f.write(
             f"https://www.google.com/maps?q={hive_location.latitude},{hive_location.longitude}\n\n"
         )

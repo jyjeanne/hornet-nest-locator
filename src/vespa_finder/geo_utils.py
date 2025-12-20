@@ -1,7 +1,6 @@
 """Geographic calculation utilities using haversine formula."""
 
 import math
-from typing import Tuple
 
 # Earth's radius in meters (WGS84 mean radius)
 EARTH_RADIUS_METERS = 6371000.0
@@ -9,7 +8,7 @@ EARTH_RADIUS_METERS = 6371000.0
 
 def destination_point(
     lat: float, lon: float, bearing: float, distance: float
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Calculate destination point given start point, bearing, and distance.
 
