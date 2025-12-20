@@ -614,10 +614,17 @@ pytest tests/ --cov=src/vespa_finder --cov-report=html
 - **Font rendering**: Uses Courier 10pt for results display with improved readability
 
 ### Scrollbar Behavior
-- Input panel includes vertical scrolling for all entry fields
+- Input panel includes **both vertical and horizontal scrollbars** for all entry fields
 - Results panel uses `ScrolledText` widget with automatic scrollbar
 - **Tip**: Use mouse wheel or arrow keys for smooth scrolling
-- **New**: Input panel is now larger (40% width) with permanent scrollbar for easier navigation
+
+### Recent GUI Improvements (v0.3.1)
+- **Input validation**: Real-time validation prevents invalid input in numeric fields
+- **Compact input fields**: Reduced entry field widths for cleaner layout
+- **Horizontal scrollbar**: Added to input panel for better navigation
+- **Left-aligned buttons**: Calculate and action buttons now properly aligned
+- **Dynamic translation**: Results panel automatically refreshes when switching languages
+- **Optimized panel ratio**: Input panel (weight=1) and Results panel (weight=2) for better balance
 
 ## 🛠️ Development
 

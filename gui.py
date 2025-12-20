@@ -27,15 +27,20 @@ logger = logging.getLogger(__name__)
 
 
 class ScrollableFrame(ttk.Frame):
-    """A scrollable frame container."""
+    """A scrollable frame container with vertical and horizontal scrollbars."""
 
     def __init__(self, container: ttk.Widget, *args, **kwargs) -> None:
         super().__init__(container, *args, **kwargs)
 
+        # Create canvas
         canvas = tk.Canvas(self, borderwidth=0, background="#f0f0f0")
-        # Create scrollbar with explicit width for better visibility
-        scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
-        # Note: ttk.Scrollbar width is controlled by the theme, but we configure the style
+
+        # Create vertical scrollbar
+        v_scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
+
+        # Create horizontal scrollbar
+        h_scrollbar = ttk.Scrollbar(self, orient="horizontal", command=canvas.xview)
+
         self.scrollable_frame = ttk.Frame(canvas)
 
         self.scrollable_frame.bind(
@@ -43,12 +48,16 @@ class ScrollableFrame(ttk.Frame):
         )
 
         canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
 
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
-        # Ensure scrollbar is always visible by setting minimum canvas height
-        canvas.config(height=600)  # Minimum height to ensure scrollbar visibility
+        # Grid layout for canvas and scrollbars
+        canvas.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        v_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        h_scrollbar.grid(row=1, column=0, sticky=(tk.W, tk.E))
+
+        # Configure grid weights
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
 
         self.scrollable_frame.bind("<Enter>", lambda _: self._bind_mousewheel(canvas))
         self.scrollable_frame.bind("<Leave>", lambda _: self._unbind_mousewheel(canvas))
@@ -72,8 +81,9 @@ class HornetLocatorGUI:
     """Beautiful GUI for Hornet Nest Locator."""
 
     # Widget width standards for consistent UI
-    ENTRY_WIDTH_STANDARD = 20  # Standard width for most entry fields
-    ENTRY_WIDTH_SMALL = 10     # For numeric inputs like minutes, seconds, speed
+    ENTRY_WIDTH_STANDARD = 15  # Standard width for most entry fields
+    ENTRY_WIDTH_SMALL = 8  # For numeric inputs like minutes, seconds, speed
+    SEPARATOR_WIDTH = 60  # Width for ASCII art separators in results panel
 
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
@@ -131,6 +141,26 @@ class HornetLocatorGUI:
         self._translation_cache.clear()
         self.update_all_labels()
 
+    def validate_float(self, value: str) -> bool:
+        """Validate that input is a valid float or empty."""
+        if value == "" or value == "-" or value == "." or value == "-.":
+            return True
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
+
+    def validate_positive_float(self, value: str) -> bool:
+        """Validate that input is a positive float or empty."""
+        if value == "" or value == ".":
+            return True
+        try:
+            val = float(value)
+            return val >= 0
+        except ValueError:
+            return False
+
     def update_all_labels(self) -> None:
         """Update all text labels and buttons when language changes."""
         # Update window title
@@ -183,9 +213,15 @@ class HornetLocatorGUI:
         self.buttons["save_report"].config(text=f"💾 {self.t('save_report')}")
         self.buttons["clear"].config(text=f"🔄 {self.t('clear')}")
 
-        # Update initial results text if no calculation has been done yet
+        # Update results text based on current state
         if not self.observations:
             self.update_initial_results_text()
+        elif self.current_hive_location and self.observations:
+            # Re-display results with new language
+            last_observation = self.observations[-1]
+            speed_text = self.speed_entry.get().strip()
+            speed = float(speed_text) if speed_text else None
+            self.display_results(last_observation, self.current_hive_location, speed)
 
     def update_initial_results_text(self) -> None:
         """Update the initial help text in the results panel."""
@@ -313,8 +349,8 @@ class HornetLocatorGUI:
 
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
-        main_frame.columnconfigure(0, weight=2)  # Make input panel larger
-        main_frame.columnconfigure(1, weight=3)  # Keep results panel slightly larger
+        main_frame.columnconfigure(0, weight=1)  # Input panel
+        main_frame.columnconfigure(1, weight=2)  # Results panel - needs more space for text
         main_frame.rowconfigure(1, weight=1)
         main_frame.rowconfigure(2, weight=1)
 
@@ -339,7 +375,6 @@ class HornetLocatorGUI:
             text="🇫🇷 FR",
             command=self.switch_language,
             style="Action.TButton",
-            width=10,
         )
         self.buttons["language"].grid(row=0, column=1, sticky=tk.E, padx=5)
 
@@ -353,17 +388,21 @@ class HornetLocatorGUI:
     def create_input_panel(self, parent: ttk.Frame) -> None:
         """Create input form panel with permanent scrollbar."""
         self.input_labelframe = ttk.LabelFrame(
-            parent, text=f"📍 {self.t('input_panel_title')}", padding="10"
+            parent, text=f"📍 {self.t('input_panel_title')}", padding="5"
         )
         self.input_labelframe.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
         self.input_labelframe.rowconfigure(0, weight=1)
         self.input_labelframe.columnconfigure(0, weight=1)
 
         scrollable = ScrollableFrame(self.input_labelframe)
-        scrollable.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
+        scrollable.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
         input_frame = scrollable.scrollable_frame
         row = 0
+
+        # Register validation commands
+        vcmd_float = (self.root.register(self.validate_float), "%P")
+        vcmd_positive = (self.root.register(self.validate_positive_float), "%P")
 
         # GPS Section
         self.labels["gps_section"] = ttk.Label(
@@ -373,16 +412,20 @@ class HornetLocatorGUI:
         row += 1
 
         self.labels["latitude"] = ttk.Label(input_frame, text=self.t("latitude"))
-        self.labels["latitude"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
-        self.lat_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_STANDARD)
-        self.lat_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
+        self.labels["latitude"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.lat_entry = ttk.Entry(
+            input_frame, width=self.ENTRY_WIDTH_STANDARD, validate="key", validatecommand=vcmd_float
+        )
+        self.lat_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         self.lat_entry.insert(0, "48.8584")
         row += 1
 
         self.labels["longitude"] = ttk.Label(input_frame, text=self.t("longitude"))
-        self.labels["longitude"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
-        self.lon_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_STANDARD)
-        self.lon_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
+        self.labels["longitude"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.lon_entry = ttk.Entry(
+            input_frame, width=self.ENTRY_WIDTH_STANDARD, validate="key", validatecommand=vcmd_float
+        )
+        self.lon_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         self.lon_entry.insert(0, "2.2945")
         row += 1
 
@@ -410,8 +453,10 @@ class HornetLocatorGUI:
         row += 1
 
         self.labels["bearing"] = ttk.Label(input_frame, text=self.t("bearing"))
-        self.labels["bearing"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
-        self.bearing_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
+        self.labels["bearing"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.bearing_entry = ttk.Entry(
+            input_frame, width=self.ENTRY_WIDTH_SMALL, validate="key", validatecommand=vcmd_positive
+        )
         self.bearing_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         self.bearing_entry.insert(0, "45")
         row += 1
@@ -443,15 +488,19 @@ class HornetLocatorGUI:
         row += 1
 
         self.labels["minutes"] = ttk.Label(input_frame, text=self.t("minutes"))
-        self.labels["minutes"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
-        self.minutes_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
+        self.labels["minutes"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.minutes_entry = ttk.Entry(
+            input_frame, width=self.ENTRY_WIDTH_SMALL, validate="key", validatecommand=vcmd_positive
+        )
         self.minutes_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         self.minutes_entry.insert(0, "6")
         row += 1
 
         self.labels["seconds"] = ttk.Label(input_frame, text=self.t("seconds"))
-        self.labels["seconds"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
-        self.seconds_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
+        self.labels["seconds"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.seconds_entry = ttk.Entry(
+            input_frame, width=self.ENTRY_WIDTH_SMALL, validate="key", validatecommand=vcmd_positive
+        )
         self.seconds_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         self.seconds_entry.insert(0, "30")
         row += 1
@@ -471,21 +520,23 @@ class HornetLocatorGUI:
         row += 1
 
         self.labels["hornet_mark"] = ttk.Label(input_frame, text=self.t("hornet_mark"))
-        self.labels["hornet_mark"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
+        self.labels["hornet_mark"].grid(row=row, column=0, sticky=tk.W, pady=5)
         self.color_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_STANDARD)
-        self.color_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
+        self.color_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         row += 1
 
         self.labels["speed"] = ttk.Label(input_frame, text=self.t("speed"))
-        self.labels["speed"].grid(row=row, column=0, sticky=tk.W, pady=5, padx=5)
-        self.speed_entry = ttk.Entry(input_frame, width=self.ENTRY_WIDTH_SMALL)
+        self.labels["speed"].grid(row=row, column=0, sticky=tk.W, pady=5)
+        self.speed_entry = ttk.Entry(
+            input_frame, width=self.ENTRY_WIDTH_SMALL, validate="key", validatecommand=vcmd_positive
+        )
         self.speed_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         row += 1
 
         self.labels["notes"] = ttk.Label(input_frame, text=self.t("notes"))
-        self.labels["notes"].grid(row=row, column=0, sticky=(tk.W, tk.N), pady=5, padx=5)
-        self.notes_entry = tk.Text(input_frame, height=3)
-        self.notes_entry.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5, padx=5)
+        self.labels["notes"].grid(row=row, column=0, sticky=(tk.W, tk.N), pady=5)
+        self.notes_entry = tk.Text(input_frame, width=self.ENTRY_WIDTH_STANDARD, height=3)
+        self.notes_entry.grid(row=row, column=1, sticky=tk.W, pady=5, padx=5)
         row += 1
 
         ttk.Separator(input_frame, orient="horizontal").grid(
@@ -500,14 +551,12 @@ class HornetLocatorGUI:
             command=self.calculate_location,
             style="Calculate.TButton",
         )
-        self.buttons["calculate"].grid(
-            row=row, column=0, columnspan=2, pady=15, sticky=(tk.W, tk.E)
-        )
+        self.buttons["calculate"].grid(row=row, column=0, columnspan=2, pady=15, sticky=tk.W)
         row += 1
 
         # Action Buttons
         button_frame = ttk.Frame(input_frame)
-        button_frame.grid(row=row, column=0, columnspan=2, pady=10)
+        button_frame.grid(row=row, column=0, columnspan=2, pady=10, sticky=tk.W)
 
         self.buttons["view_map"] = ttk.Button(
             button_frame,
@@ -608,7 +657,9 @@ class HornetLocatorGUI:
                 self.t("success_title"),
                 self.t("success_message").format(filename=os.path.basename(self.current_map_file)),
             )
-            logger.info(f"Successfully calculated hive location and generated map: {self.current_map_file}")
+            logger.info(
+                f"Successfully calculated hive location and generated map: {self.current_map_file}"
+            )
 
         except ValueError as e:
             logger.error(f"Validation error in calculate_location: {e}")
@@ -617,10 +668,7 @@ class HornetLocatorGUI:
             )
         except OSError as e:
             logger.error(f"File I/O error in calculate_location: {e}")
-            messagebox.showerror(
-                "File Error",
-                f"Failed to create or save map file: {e}"
-            )
+            messagebox.showerror("File Error", f"Failed to create or save map file: {e}")
         except Exception as e:
             logger.exception(f"Unexpected error in calculate_location: {e}")
             messagebox.showerror(
@@ -636,9 +684,9 @@ class HornetLocatorGUI:
         self.results_text.delete("1.0", tk.END)
 
         output = f"""
-{"=" * 60}
+{"=" * self.SEPARATOR_WIDTH}
 {self.t("results_header")}
-{"=" * 60}
+{"=" * self.SEPARATOR_WIDTH}
 
 {self.t("observation_point")}
   {self.t("location")} {format_coordinates(observation.latitude, observation.longitude)}
@@ -649,9 +697,9 @@ class HornetLocatorGUI:
   {self.t("direction")} {format_bearing(observation.bearing)}
   {self.t("round_trip_time")} {observation.round_trip_time:.0f}s ({observation.round_trip_time / 60:.2f}min)
 
-{"=" * 60}
+{"=" * self.SEPARATOR_WIDTH}
 {self.t("empirical_method")}
-{"=" * 60}
+{"=" * self.SEPARATOR_WIDTH}
   {self.t("empirical_formula")}
 
   {self.t("calculated_distance")} {hive_empirical.distance_from_observer:.0f} meters
@@ -677,9 +725,9 @@ class HornetLocatorGUI:
         if speed is not None:
             comparison = self.calculator.compare_methods(observation)
             output += f"""
-{"=" * 60}
+{"=" * self.SEPARATOR_WIDTH}
 {self.t("theoretical_method")}
-{"=" * 60}
+{"=" * self.SEPARATOR_WIDTH}
   {self.t("theoretical_formula")}
   {self.t("speed_used")} {speed} m/s ({speed * 3.6:.1f} km/h)
 
@@ -695,9 +743,9 @@ class HornetLocatorGUI:
             output += f"\n{self.t('notes_label')}\n{observation.notes}\n"
 
         output += f"""
-{"=" * 60}
+{"=" * self.SEPARATOR_WIDTH}
 {self.t("map_info")}
-{"=" * 60}
+{"=" * self.SEPARATOR_WIDTH}
   {self.t("map_opened")}
   {self.t("map_saved")} {os.path.basename(self.current_map_file)}
 
@@ -705,23 +753,21 @@ class HornetLocatorGUI:
 
   {self.t("map_actions")}
 
-{"=" * 60}
+{"=" * self.SEPARATOR_WIDTH}
 {self.t("next_steps")}
-{"=" * 60}
+{"=" * self.SEPARATOR_WIDTH}
   {self.t("equipment")}
 
   {self.t("search")}
 
   {self.t("safety")}
-{"=" * 60}
+{"=" * self.SEPARATOR_WIDTH}
 """
 
         self.results_text.insert("1.0", output)
         self.results_text.config(state="disabled")
 
-    def generate_and_open_map(
-        self, observation: Observation, hive_location: HiveLocation
-    ) -> None:
+    def generate_and_open_map(self, observation: Observation, hive_location: HiveLocation) -> None:
         """Generate interactive map and open in browser."""
         try:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -739,10 +785,7 @@ class HornetLocatorGUI:
 
         except OSError as e:
             logger.error(f"File I/O error generating map: {e}")
-            messagebox.showerror(
-                "Map Generation Error",
-                f"Failed to create map file: {e}"
-            )
+            messagebox.showerror("Map Generation Error", f"Failed to create map file: {e}")
         except Exception as e:
             logger.exception(f"Unexpected error generating map: {e}")
             messagebox.showerror(

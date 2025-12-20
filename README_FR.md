@@ -614,9 +614,17 @@ pytest tests/ --cov=src/vespa_finder --cov-report=html
 - **Rendu des polices** : Utilise Courier 10pt pour l'affichage des résultats avec une meilleure lisibilité
 
 ### Comportement de la Barre de Défilement
-- Le panneau de saisie inclut un défilement vertical pour tous les champs
+- Le panneau de saisie inclut **des barres de défilement verticale et horizontale** pour tous les champs
 - Le panneau de résultats utilise un widget `ScrolledText` avec barre de défilement automatique
 - **Astuce** : Utilisez la molette de la souris ou les touches fléchées pour un défilement fluide
+
+### Améliorations Récentes de l'Interface (v0.3.1)
+- **Validation des entrées** : Validation en temps réel empêche les saisies invalides dans les champs numériques
+- **Champs de saisie compacts** : Largeur des champs réduite pour une mise en page plus claire
+- **Barre de défilement horizontale** : Ajoutée au panneau de saisie pour une meilleure navigation
+- **Boutons alignés à gauche** : Les boutons Calculer et d'action sont maintenant correctement alignés
+- **Traduction dynamique** : Le panneau de résultats se rafraîchit automatiquement lors du changement de langue
+- **Ratio de panneaux optimisé** : Panneau de saisie (poids=1) et Panneau de résultats (poids=2) pour un meilleur équilibre
 
 ## 🛠️ Développement
 
