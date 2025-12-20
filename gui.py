@@ -11,7 +11,6 @@ import traceback
 import webbrowser
 from datetime import datetime
 from tkinter import messagebox, scrolledtext, ttk
-from typing import Optional
 
 from vespa_finder import HiveCalculator, Observation
 from vespa_finder.geo_utils import format_bearing, format_coordinates
@@ -40,7 +39,7 @@ class ScrollableFrame(ttk.Frame):
         self.scrollable_frame = ttk.Frame(canvas)
 
         self.scrollable_frame.bind(
-            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+            "<Configure>", lambda _: canvas.configure(scrollregion=canvas.bbox("all"))
         )
 
         canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
@@ -51,8 +50,8 @@ class ScrollableFrame(ttk.Frame):
         # Ensure scrollbar is always visible by setting minimum canvas height
         canvas.config(height=600)  # Minimum height to ensure scrollbar visibility
 
-        self.scrollable_frame.bind("<Enter>", lambda e: self._bind_mousewheel(canvas))
-        self.scrollable_frame.bind("<Leave>", lambda e: self._unbind_mousewheel(canvas))
+        self.scrollable_frame.bind("<Enter>", lambda _: self._bind_mousewheel(canvas))
+        self.scrollable_frame.bind("<Leave>", lambda _: self._unbind_mousewheel(canvas))
 
         self.canvas = canvas
 
@@ -60,8 +59,8 @@ class ScrollableFrame(ttk.Frame):
         canvas.bind_all(
             "<MouseWheel>", lambda e: canvas.yview_scroll(int(-1 * (e.delta / 120)), "units")
         )
-        canvas.bind_all("<Button-4>", lambda e: canvas.yview_scroll(-1, "units"))
-        canvas.bind_all("<Button-5>", lambda e: canvas.yview_scroll(1, "units"))
+        canvas.bind_all("<Button-4>", lambda _: canvas.yview_scroll(-1, "units"))
+        canvas.bind_all("<Button-5>", lambda _: canvas.yview_scroll(1, "units"))
 
     def _unbind_mousewheel(self, canvas: tk.Canvas) -> None:
         canvas.unbind_all("<MouseWheel>")
@@ -214,7 +213,7 @@ class HornetLocatorGUI:
    (Vespawatchers empirical standard)
 
 🔍 ESSENTIAL EQUIPMENT:
-   • Binoculars 8×42 (MOST IMPORTANT TOOL!)
+   • Binoculars 8x42 (MOST IMPORTANT TOOL!)
    • Wick pot with sugar bait
    • Color markers (white recommended)
    • Butterfly net, compass, stopwatch
@@ -259,7 +258,7 @@ class HornetLocatorGUI:
    (Standard empirique Vespawatchers)
 
 🔍 ÉQUIPEMENT ESSENTIEL :
-   • Jumelles 8×42 (OUTIL LE PLUS IMPORTANT !)
+   • Jumelles 8x42 (OUTIL LE PLUS IMPORTANT !)
    • Pot à mèche avec appât sucré
    • Marqueurs de couleur (blanc recommandé)
    • Filet à papillons, boussole, chronomètre
@@ -616,7 +615,7 @@ class HornetLocatorGUI:
             messagebox.showerror(
                 self.t("error_title"), self.t("error_message").format(error=str(e))
             )
-        except (OSError, IOError) as e:
+        except OSError as e:
             logger.error(f"File I/O error in calculate_location: {e}")
             messagebox.showerror(
                 "File Error",
@@ -630,7 +629,7 @@ class HornetLocatorGUI:
             traceback.print_exc()
 
     def display_results(
-        self, observation: Observation, hive_empirical: HiveLocation, speed: Optional[float]
+        self, observation: Observation, hive_empirical: HiveLocation, speed: float | None
     ) -> None:
         """Display calculation results."""
         self.results_text.config(state="normal")
@@ -738,7 +737,7 @@ class HornetLocatorGUI:
             webbrowser.open("file://" + os.path.abspath(self.current_map_file))
             logger.info(f"Map generated and opened: {self.current_map_file}")
 
-        except (OSError, IOError) as e:
+        except OSError as e:
             logger.error(f"File I/O error generating map: {e}")
             messagebox.showerror(
                 "Map Generation Error",
@@ -785,7 +784,7 @@ class HornetLocatorGUI:
                 self.t("saved_title"), self.t("saved_message").format(filename=filename)
             )
             logger.info(f"Report saved to: {filename}")
-        except (OSError, IOError, PermissionError) as e:
+        except (OSError, PermissionError) as e:
             logger.error(f"File I/O error saving report: {e}")
             messagebox.showerror(
                 self.t("save_error_title"), self.t("save_error_message").format(error=str(e))
@@ -813,7 +812,7 @@ class HornetLocatorGUI:
 def main() -> None:
     """Launch the GUI application."""
     root = tk.Tk()
-    app = HornetLocatorGUI(root)
+    HornetLocatorGUI(root)
     root.mainloop()
 
 
