@@ -1,7 +1,6 @@
 # 🐝 Localisateur de Nids de Frelons
 
 [![Statut CI](https://github.com/jyjeanne/hornet-nest-locator/actions/workflows/ci.yml/badge.svg)](https://github.com/jyjeanne/hornet-nest-locator/actions/workflows/ci.yml)
-[![Build Windows](https://github.com/jyjeanne/hornet-nest-locator/actions/workflows/build_windows.yml/badge.svg)](https://github.com/jyjeanne/hornet-nest-locator/actions/workflows/build_windows.yml)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![Licence MIT](https://img.shields.io/badge/licence-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Style de Code: Ruff](https://img.shields.io/badge/style%20de%20code-ruff-000000.svg)](https://github.com/astral-sh/ruff)
@@ -19,7 +18,7 @@
 
 ## 🚀 Démarrage Rapide
 
-### 📥 Télécharger l'Application Autonome (Pas besoin de Python)
+### 📥 Télécharger l'Application Autonome pour windows via la section release 
 
 **🪟 Exécutable Windows**
 [![Télécharger](https://img.shields.io/badge/Télécharger-Windows%20EXE-blue?style=for-the-badge&logo=windows)](https://github.com/YOUR-USERNAME/hornet-nest-locator/releases/latest)
