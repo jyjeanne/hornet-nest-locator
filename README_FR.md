@@ -10,11 +10,11 @@
 
 🇬🇧 **[English Version](README.md)** | 📖 **[Documentation](docs/)** | 🗺️ **[Feuille de Route](docs/ROADMAP.md)**
 
-> **🐝 Créé pour Aider les Apiculteurs à Lutter contre les Frelons Asiatiques**
+> **🐝 Créé par un apiculteur pour aider les apiculteurs à Lutter contre les Frelons Asiatiques**
 > 
-> Les frelons asiatiques (*Vespa velutina*) sont des prédateurs dévastateurs qui détruisent les ruches, menaçant nos pollinisateurs vitaux. Cet outil a été spécialement développé pour aider les apiculteurs à localiser et éliminer les nids de frelons avant qu'ils ne puissent décimer les colonies d'abeilles. En suivant les trajectoires de vol des frelons et en calculant les emplacements des nids, les apiculteurs peuvent prendre des mesures ciblées pour protéger leurs ruches et préserver les populations d'abeilles.
+> Les frelons asiatiques (*Vespa velutina*) sont des prédateurs dévastateurs qui détruisent les ruches, menaçant nos pollinisateurs vitaux. Cet outil a été spécialement développé par un apiculteur amateur ( Jeremy JEANNE) pour aider les apiculteurs à localiser et éliminer les nids de frelons asiatiques avant qu'ils ne puissent décimer les colonies d'abeilles. En suivant les trajectoires de vol des frelons et en calculant les emplacements des nids, les apiculteurs peuvent prendre des mesures ciblées pour protéger leurs ruches et préserver les populations d'abeilles. Cet application et cette méthodolgue ne sont pas parfaits. Cette méthode ne remplace pas le piègage mais elle vient en complément. Je reste ouvert à toutes remarques constructives qui me permettrait de l'améliorer. **ATTENTION : pour la destruction des nids , il est préférable de faire appel à un professionel et je ne pourrais être tenu responsable en cas de piqures ou de blessures graves si vous intervenez seul et sans les protections nécessaire, le frelon asiatique est un animal dangereux**.
 
-**Rejoignez la lutte pour sauver nos abeilles !** 🐝💛
+**Rejoignez la lutte contre le frelon asiatique(*Vespa velutina*) pour sauver nos abeilles !** 🐝💛
 
 ## 🚀 Démarrage Rapide
 
@@ -58,11 +58,11 @@ python main.py
 - ⭕ **Zones de Confiance** - Indicateurs de zone de recherche
 - 🗺️ **Multiples Couches de Carte** - Vues satellite, terrain et rue
 
-### 📊 Méthodes de Calcul Professionnelles
+### 📊 Méthodes de Calcul utilisées
 
 | Méthode | Description | Précision |
 |---------|-------------|-----------|
-| **Empirique** 🎯 | Standard Vespawatchers (100m/min) | ⭐⭐⭐⭐⭐ |
+| **Empirique** 🎯 | Standard  (100m/min) | ⭐⭐⭐⭐⭐ |
 | **Théorique** 📈 | Formule vitesse × temps | ⭐⭐⭐ |
 | **Triangulation** 🔺 | Observations multiples | ⭐⭐⭐⭐⭐ |
 
@@ -70,7 +70,7 @@ python main.py
 
 - 🇬🇧 **Anglais** - Langue par défaut
 - 🇫🇷 **Français** - Traduction complète
-- 🌐 **Changement Facile** - Basculer d'un clic
+- 🌐 **Changement Facile** - Basculer d'un clic via un bouton
 
 ### 🔧 Fonctionnalités Avancées
 
@@ -88,15 +88,15 @@ Les frelons asiatiques (*Vespa velutina*) volent des trajectoires relativement d
 
 1. **Temps d'aller-retour** ⏱️ - Combien de temps le frelon met pour aller et revenir
 2. **Direction de vol** 🧭 - Cap au compas où le frelon vole
-3. **Point d'observation** 📍 - Vos coordonnées GPS
+3. **Point d'observation** 📍 - Vos coordonnées GPS (zone de piègeage)
 
-Nous pouvons calculer l'emplacement du nid en utilisant la **méthode empirique Vespawatchers** :
+Nous pouvons calculer l'emplacement du nid en utilisant la **méthode empirique ** :
 
 ```
 Distance (mètres) = Temps d'aller-retour (minutes) × 100
 ```
 
-### 📐 Méthodologie Professionnelle
+### 📐 Méthodologie étapes par étapes
 
 ```mermaid
 graph TD
@@ -105,8 +105,8 @@ graph TD
     C --> D[Mesurer Temps Aller-Retour]
     D --> E[Calculer Distance]
     E --> F[Projeter Emplacement du Nid]
-    F --> G[Générer Carte]
-    G --> H[Sauvegarder Rapport]
+    F --> G[Générer une Carte avec la position théorique du nid]
+    G --> H[Sauvegarder un Rapport]
 ```
 
 ---
@@ -118,34 +118,32 @@ graph TD
 Avant de commencer, rassemblez ces éléments essentiels :
 
 #### **Équipement Essentiel** (Requis)
-- ✅ **Jumelles 8×42** - LE PLUS IMPORTANT ! Pour suivre les frelons en vol
-- ✅ **Smartphone avec GPS** - Pour coordonnées et boussole
+- ✅ **Jumelles 8×42** - IMPORTANT ! Pour observer la cime des arbres, maison ( cheminée) , les emplacement possibles des nids
+- ✅ **Smartphone avec GPS** - Pour determiner des coordonnées GPS 
 - ✅ **Chronomètre** - Pour un chronométrage précis (application smartphone acceptable)
 - ✅ **Boussole** - Mécanique ou application (lectures 0-360°)
 - ✅ **Carnet et stylo** - Pour enregistrer les observations
 
-#### **Matériel pour Station d'Appât** (Requis)
-- ✅ **Sirop de sucre** - Mélangez 1 part de sucre + 1 part d'eau (ou eau miellée)
+#### **Matériel pour créer un **poste d'appâtage** pour les frelons ** (Requis)
+- ✅ **Cocktail pour frelon** - Mélangez 1 part de sirop + 1 part d'alcool( repulsif pour abeilles) + 1 part de bière 
 - ✅ **Pot à mèche** - Petit récipient avec matériau absorbant (coton, éponge)
 - ✅ **Support d'appât** - Petite table ou plateforme élevée (~1m de haut)
 
 #### **Matériel de Marquage** (Fortement Recommandé)
 - ✅ **Peinture non toxique** - Blanc, jaune ou rouge (acrylique à base d'eau)
 - ✅ **Pinceau fin** - Pour marquer les frelons individuels
-- ✅ **Filet à papillons** - Optionnel, pour attraper les frelons à marquer
+- ✅ **une glacière et bouteille en plastique** - Pour endormir les frelons individuels
+- ✅ **Filet à papillons OU raquette électrique** - Optionnel, pour attraper les frelons à marquer
 
 #### **Équipement de Sécurité** (Essentiel)
-- ✅ **Vêtements de couleur claire** - Évitez les couleurs sombres qui attirent les frelons
-- ✅ **Chapeau à bord** - Protégez votre tête
-- ✅ **Protection oculaire** - Lunettes de sécurité ou de soleil
+- ✅ **Combinaison de protection** - IMPORTANT pour éviter les piqures de frelons
+- ✅ **Lunette de Protection ** - Lunettes de sécurité ou de soleil pour éviter les projection de venin
 - ⚠️ **Téléphone d'urgence** - Complètement chargé, avec numéros d'urgence programmés
 
 #### **Optionnel mais Utile**
 - 📱 Chargeur de téléphone portable
 - 🗺️ Carte physique de la zone
 - 📷 Appareil photo pour documenter le processus
-- 🧴 Eau et collations (longues sessions d'observation)
-- 🌡️ Équipement adapté à la météo
 
 ---
 
@@ -154,8 +152,8 @@ Avant de commencer, rassemblez ces éléments essentiels :
 #### **ÉTAPE 1 : Trouver un Bon Emplacement** 🗺️
 
 **Que faire :**
-1. Cherchez des zones où les frelons chassent (près de ruchers, fleurs ou arbres fruitiers)
-2. Choisissez une zone ouverte avec bonne visibilité
+1. Cherchez des zones où les frelons chassent (près de votre rucher, fleurs(lière) ou arbres fruitiers)
+2. Choisissez une zone ouverte avec une bonne visibilité
 3. Assurez-vous d'avoir un signal téléphonique pour le GPS
 4. Notez l'heure (idéal : 9h - 16h les jours ensoleillés)
 
@@ -168,17 +166,16 @@ Avant de commencer, rassemblez ces éléments essentiels :
 
 ---
 
-#### **ÉTAPE 2 : Installer Votre Station d'Appât** 🍯
+#### **ÉTAPE 2 : Installer Votre poste d'Appâtage** 🍯
 
 **Que faire :**
-1. **Préparez le sirop de sucre :**
-   - Mélangez 100ml de sucre + 100ml d'eau
-   - Chauffez doucement jusqu'à dissolution du sucre (optionnel)
-   - Laissez refroidir à température ambiante
+1. **Préparez le cocktail pour frelon :**
+   - Mélangez 1 part de sirop + 1 part d'alcool ( vin blanc ) + 1 part de bière brune
+   - plancer le mélange dans une bouteille
 
 2. **Installez le pot à mèche :**
-   - Versez le sirop dans un petit récipient
-   - Placez du matériau absorbant (coton/éponge) pour imbiber le sirop
+   - Versez le cocktail dans un petit récipient
+   - Placez du matériau absorbant (coton/éponge) pour imbiber le cocktail
    - Positionnez sur plateforme élevée (~1 mètre de haut)
 
 3. **Attendez l'arrivée des frelons :**
@@ -189,20 +186,20 @@ Avant de commencer, rassemblez ces éléments essentiels :
 **Temps estimé :** 10-15 minutes d'installation, 30-120 minutes d'attente
 
 **Note de sécurité :**
-⚠️ N'utilisez pas de substances toxiques. Seule l'eau sucrée est nécessaire !
+⚠️ N'utilisez pas de substances toxiques. Seule le cocktail est nécessaire !
 
 ---
 
-#### **ÉTAPE 3 : Marquer les Frelons Individuels** 🎨
+#### **ÉTAPE 3 : Marquer les Frelons Individuellement** 🎨
 
 **Que faire :**
 1. **Attendez que le frelon se nourrisse :**
-   - Laissez le frelon se poser sur la station d'appât
+   - Laissez le frelon se poser sur le poste d'appâtage
    - Attendez qu'il soit complètement occupé à se nourrir
 
 2. **Marquez le frelon :**
-   - **Méthode A** (sans filet) : Tamponnez doucement la peinture sur le thorax pendant qu'il se nourrit
-   - **Méthode B** (avec filet) : Attrapez brièvement, marquez, relâchez immédiatement
+   - **Méthode A** (avec filet) : Attrapez brièvement, le mettre dans une bouteille puis dans une glacière, marquez le frelon, relâchez immédiatement
+   - **Méthode B** (avec la raquètre électrique) : electrifiez le frelon brièvement, il sera endormi, marquez le rapidement, relâchez immédiatement
 
 3. **Utilisez des couleurs distinctes :**
    - Premier frelon : Peinture blanche
@@ -221,7 +218,7 @@ Avant de commencer, rassemblez ces éléments essentiels :
 - Ne serrez jamais ni ne blessez le frelon
 - Ne marquez que 1-2 frelons initialement
 
-**Astuce pro :** La peinture blanche est la plus visible aux jumelles !
+**Astuce  :** La peinture blanche est la plus visible aux jumelles !
 
 ---
 
@@ -258,7 +255,7 @@ Avant de commencer, rassemblez ces éléments essentiels :
    - Notez la direction dans laquelle il vole en partant
 
 2. **Mesurez la direction de départ avec la boussole :**
-   - Tenez-vous à la station d'appât
+   - Tenez-vous au poste d'appâtage
    - Pointez la boussole dans la direction où le frelon vole
    - Lisez le cap en degrés (0-360°)
    - **Exemples :**
@@ -272,7 +269,7 @@ Avant de commencer, rassemblez ces éléments essentiels :
 **Temps estimé :** 5-10 minutes
 
 **Conseils :**
-- Suivez le frelon sur au moins 50-100 mètres
+- Si possible ,Suivez le frelon sur au moins 50-100 mètres
 - Plus vous pouvez le voir loin, plus votre cap sera précis
 - Notez le cap immédiatement
 - Utilisez des repères pour mémoriser la direction
@@ -285,12 +282,12 @@ Avant de commencer, rassemblez ces éléments essentiels :
 
 **Que faire :**
 1. **Démarrez votre chronomètre quand :**
-   - Le frelon marqué quitte la station d'appât
+   - Le frelon marqué quitte le poste d'appâtage
    - Il doit être clairement visible en partant
 
 2. **Arrêtez votre chronomètre quand :**
    - LE MÊME frelon marqué revient (vérifiez la couleur de peinture !)
-   - Il se pose à nouveau sur la station d'appât
+   - Il se pose à nouveau sur le poste d'appâtage
 
 3. **Enregistrez le temps en minutes et secondes :**
    - Exemple : 6 minutes 30 secondes
@@ -327,7 +324,7 @@ Avant de commencer, rassemblez ces éléments essentiels :
 1. **Lancez l'application VespaFinder :**
    ```bash
    python gui.py
-   # ou double-cliquez sur l'exécutable VespaFinder
+   # ou double-cliquez sur l'exécutable windows VespaFinder.exe
    ```
 
 2. **Entrez les coordonnées GPS :**
