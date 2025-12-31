@@ -73,8 +73,14 @@ class SimpleMapGenerator:
         # Write file with error handling and path validation
         try:
             # Validate and sanitize output path to prevent path traversal
-            abs_output = os.path.abspath(output_file)
+            base_dir = os.path.realpath(os.getcwd())
+            abs_output = os.path.realpath(output_file)
 
+            # Ensure the output path is within the allowed base directory
+            if os.path.commonpath([base_dir, abs_output]) != base_dir:
+                raise MapGenerationError(
+                    f"Invalid output path outside allowed directory: {output_file}"
+                )
             # Ensure directory exists
             output_dir = os.path.dirname(abs_output)
             if output_dir and not os.path.exists(output_dir):
