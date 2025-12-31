@@ -109,8 +109,17 @@ class MapVisualizer:
         # Save map with error handling and path validation
         try:
             # Validate and sanitize output path to prevent path traversal
-            abs_output = os.path.abspath(output_file)
+            base_dir = os.path.realpath(os.getcwd())
+            if os.path.isabs(output_file):
+                candidate_path = output_file
+            else:
+                candidate_path = os.path.join(base_dir, output_file)
 
+            abs_output = os.path.realpath(candidate_path)
+
+            # Ensure resolved path stays within the allowed base directory
+            if not abs_output.startswith(base_dir + os.sep) and abs_output != base_dir:
+                raise MapGenerationError(f"Invalid output path outside allowed directory: {output_file}")
             # Ensure directory exists
             output_dir = os.path.dirname(abs_output)
             if output_dir and not os.path.exists(output_dir):
