@@ -32,7 +32,7 @@ class Observation:
         if not -180 <= self.longitude <= 180:
             raise ValueError(f"Longitude must be between -180 and 180, got {self.longitude}")
         if not 0 <= self.bearing < 360:
-            raise ValueError(f"Bearing must be between 0 and 360 (exclusive), got {self.bearing}")
+            raise ValueError(f"Bearing must be between 0 (inclusive) and 360 (exclusive), got {self.bearing}")
         if self.round_trip_time <= 0:
             raise ValueError(f"Round trip time must be positive, got {self.round_trip_time}")
         if self.speed is not None and self.speed <= 0:
