@@ -22,13 +22,17 @@ class Observation:
         if self.timestamp is None:
             self.timestamp = datetime.now()
 
+        # Normalize bearing: 360° equals 0° in compass notation
+        if self.bearing == 360.0:
+            self.bearing = 0.0
+
         # Validate ranges
         if not -90 <= self.latitude <= 90:
             raise ValueError(f"Latitude must be between -90 and 90, got {self.latitude}")
         if not -180 <= self.longitude <= 180:
             raise ValueError(f"Longitude must be between -180 and 180, got {self.longitude}")
-        if not 0 <= self.bearing <= 360:
-            raise ValueError(f"Bearing must be between 0 and 360, got {self.bearing}")
+        if not 0 <= self.bearing < 360:
+            raise ValueError(f"Bearing must be between 0 and 360 (exclusive), got {self.bearing}")
         if self.round_trip_time <= 0:
             raise ValueError(f"Round trip time must be positive, got {self.round_trip_time}")
         if self.speed is not None and self.speed <= 0:

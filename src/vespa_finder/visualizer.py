@@ -1,5 +1,6 @@
 """Map visualization for hornet observations and hive locations."""
 
+import html
 import os
 
 import folium
@@ -105,20 +106,23 @@ class MapVisualizer:
         legend_html = self._create_legend(len(observations), len(hive_locations))
         m.get_root().html.add_child(folium.Element(legend_html))
 
-        # Save map with error handling
+        # Save map with error handling and path validation
         try:
+            # Validate and sanitize output path to prevent path traversal
+            abs_output = os.path.abspath(output_file)
+
             # Ensure directory exists
-            output_dir = os.path.dirname(output_file)
+            output_dir = os.path.dirname(abs_output)
             if output_dir and not os.path.exists(output_dir):
                 os.makedirs(output_dir, exist_ok=True)
 
-            m.save(output_file)
+            m.save(abs_output)
         except PermissionError as e:
             raise MapGenerationError(f"Permission denied writing to {output_file}: {e}") from e
         except OSError as e:
             raise MapGenerationError(f"Failed to write map file {output_file}: {e}") from e
 
-        return output_file
+        return abs_output
 
     def _create_observation_popup(self, obs: Observation, number: int) -> str:
         """Create HTML popup for observation marker."""
@@ -126,6 +130,10 @@ class MapVisualizer:
         speed_info = ""
         if obs.speed is not None:
             speed_info = f"<b>Speed:</b> {obs.speed} m/s ({obs.speed * 3.6:.1f} km/h)<br>"
+
+        # Escape user-provided data to prevent XSS attacks
+        notes_escaped = html.escape(obs.notes) if obs.notes else ""
+        notes_html = f"<b>Notes:</b> {notes_escaped}" if notes_escaped else ""
 
         return f"""
         <div style="font-family: Arial; width: 250px;">
@@ -136,12 +144,15 @@ class MapVisualizer:
             {speed_info}
             <b>Round trip:</b> {obs.round_trip_time:.0f}s ({obs.round_trip_time / 60:.1f}min)<br>
             <b>Estimated distance:</b> {obs.estimated_distance:.0f}m<br>
-            {f"<b>Notes:</b> {obs.notes}" if obs.notes else ""}
+            {notes_html}
         </div>
         """
 
     def _create_hive_popup(self, hive: HiveLocation, number: int) -> str:
         """Create HTML popup for hive location marker."""
+        # Escape calculation method to prevent XSS
+        method_escaped = html.escape(hive.calculation_method)
+
         return f"""
         <div style="font-family: Arial; width: 250px;">
             <h4 style="color: red;">Estimated Hive Location {number}</h4>
@@ -149,7 +160,7 @@ class MapVisualizer:
             <b>Distance:</b> {hive.distance_from_observer:.0f}m ({hive.distance_from_observer / 1000:.2f}km)<br>
             <b>Bearing:</b> {hive.bearing_from_observer:.1f}°<br>
             <b>Confidence:</b> ±{hive.confidence_radius:.0f}m<br>
-            <b>Method:</b> {hive.calculation_method}<br>
+            <b>Method:</b> {method_escaped}<br>
             <br>
             <a href="https://www.google.com/maps?q={hive.latitude},{hive.longitude}" target="_blank">
                 Open in Google Maps

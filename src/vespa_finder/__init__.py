@@ -1,9 +1,16 @@
 """Hornet Nest Locator - Track hornets to locate and remove nests."""
 
-__version__ = "0.3.0"
-
+from .__version__ import __repository__, __version__
 from .calculator import HiveCalculator
 from .models import HiveLocation, Observation
 from .wildlife_api import WildlifeAPIError, WildlifeReporter
 
-__all__ = ["HiveCalculator", "HiveLocation", "Observation", "WildlifeAPIError", "WildlifeReporter"]
+__all__ = [
+    "HiveCalculator",
+    "HiveLocation",
+    "Observation",
+    "WildlifeAPIError",
+    "WildlifeReporter",
+    "__version__",
+    "__repository__",
+]

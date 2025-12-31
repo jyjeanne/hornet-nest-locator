@@ -4,6 +4,7 @@ from typing import ClassVar
 
 import requests
 
+from .__version__ import __repository__, __version__
 from .models import HiveLocation, Observation
 
 
@@ -48,7 +49,7 @@ class WildlifeReporter:
         self.session = requests.Session()
         self.session.headers.update(
             {
-                "User-Agent": "VespaFinder/0.3.0 (+https://github.com/YOUR-USERNAME/vespa-finder)",
+                "User-Agent": f"VespaFinder/{__version__} (+{__repository__})",
                 "Accept": "application/json",
             }
         )
@@ -189,7 +190,7 @@ class WildlifeReporter:
                 f"Distance: {hive_location.distance_from_observer:.0f}m, Bearing: {observation.bearing}°"
             ),
             "accuracy": hive_location.confidence_radius,
-            "source": "VespaFinder 0.3.0",
+            "source": f"VespaFinder {__version__}",
         }
 
     def _prepare_observatoire_data(

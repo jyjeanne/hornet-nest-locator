@@ -1,5 +1,6 @@
 """Simple standalone HTML map generator that works in embedded browsers."""
 
+import html
 import os
 
 from .geo_utils import destination_point
@@ -69,21 +70,24 @@ class SimpleMapGenerator:
         html_content += self._generate_legend_js(len(observations), len(hive_locations))
         html_content += self._generate_html_footer()
 
-        # Write file with error handling
+        # Write file with error handling and path validation
         try:
+            # Validate and sanitize output path to prevent path traversal
+            abs_output = os.path.abspath(output_file)
+
             # Ensure directory exists
-            output_dir = os.path.dirname(output_file)
+            output_dir = os.path.dirname(abs_output)
             if output_dir and not os.path.exists(output_dir):
                 os.makedirs(output_dir, exist_ok=True)
 
-            with open(output_file, "w", encoding="utf-8") as f:
+            with open(abs_output, "w", encoding="utf-8") as f:
                 f.write(html_content)
         except PermissionError as e:
             raise MapGenerationError(f"Permission denied writing to {output_file}: {e}") from e
         except OSError as e:
             raise MapGenerationError(f"Failed to write map file {output_file}: {e}") from e
 
-        return output_file
+        return abs_output
 
     def _generate_html_header(self, center_lat: float, center_lon: float) -> str:
         """Generate HTML header with Leaflet setup."""
@@ -153,6 +157,14 @@ class SimpleMapGenerator:
             color = f"colors[{i % 8}]"
             marker_url = self._get_marker_url(i)
 
+            # Escape user-provided data to prevent XSS attacks
+            notes_escaped = html.escape(obs.notes) if obs.notes else ""
+            mark_escaped = html.escape(obs.hornet_color_mark) if obs.hornet_color_mark else ""
+
+            # Build optional fields HTML
+            hornet_mark_html = f"<br><b>Hornet mark:</b> {mark_escaped}" if mark_escaped else ""
+            notes_html = f"<br><b>Notes:</b> {notes_escaped}" if notes_escaped else ""
+
             js += f"""
         // Observation point {i + 1}
         var obsMarker{i} = L.marker([{obs.latitude}, {obs.longitude}], {{
@@ -174,8 +186,8 @@ class SimpleMapGenerator:
                 <b>Bearing:</b> {obs.bearing}°<br>
                 <b>Round trip:</b> {obs.round_trip_time:.0f}s ({obs.round_trip_time / 60:.1f}min)<br>
                 <b>Distance:</b> {obs.estimated_distance:.0f}m
-                {f"<br><b>Hornet mark:</b> {obs.hornet_color_mark}" if obs.hornet_color_mark else ""}
-                {f"<br><b>Notes:</b> {obs.notes}" if obs.notes else ""}
+                {hornet_mark_html}
+                {notes_html}
             </div>
         `);
 
@@ -227,6 +239,13 @@ class SimpleMapGenerator:
             obs_index = min(i, len(observations) - 1)
             obs = observations[obs_index]
 
+            # Escape calculation method to prevent XSS
+            method_escaped = html.escape(hive.calculation_method)
+
+            # Build hive title
+            hive_number = f" {i + 1}" if len(hive_locations) > 1 else ""
+            hive_title = f"🔴 Estimated Hive{hive_number}"
+
             js += f"""
         // Hive location {i + 1}
         var hiveMarker{i} = L.marker([{hive.latitude}, {hive.longitude}], {{
@@ -242,12 +261,12 @@ class SimpleMapGenerator:
 
         hiveMarker{i}.bindPopup(`
             <div style="font-family: Arial; width: 220px;">
-                <h4 style="color: red;">🔴 Estimated Hive{" " + str(i + 1) if len(hive_locations) > 1 else ""}</h4>
+                <h4 style="color: red;">{hive_title}</h4>
                 <b>Location:</b> {hive.latitude:.6f}, {hive.longitude:.6f}<br>
                 <b>Distance:</b> {hive.distance_from_observer:.0f}m ({hive.distance_from_observer / 1000:.2f}km)<br>
                 <b>Bearing:</b> {hive.bearing_from_observer:.1f}°<br>
                 <b>Confidence:</b> ±{hive.confidence_radius:.0f}m<br>
-                <b>Method:</b> {hive.calculation_method}<br>
+                <b>Method:</b> {method_escaped}<br>
                 <br>
                 <a href="https://www.google.com/maps?q={hive.latitude},{hive.longitude}" target="_blank">
                     Open in Google Maps
