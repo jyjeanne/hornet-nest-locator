@@ -4,7 +4,7 @@
 
 import sys
 
-from vespa_finder import HiveCalculator, Observation
+from vespa_finder import HiveCalculator, Observation, __version__
 from vespa_finder.geo_utils import format_bearing, format_coordinates
 
 
@@ -222,7 +222,8 @@ def save_to_file(observation: Observation, hive_location):
 def main():
     """Main program entry point."""
     print("╔══════════════════════════════════════════════════════════════╗")
-    print("║       VESPAFINDER v0.3.0                                     ║")
+    title_line = f"       VESPAFINDER v{__version__}"
+    print(f"║{title_line.ljust(64)}║")
     print("║       Professional Methodology (Vespawatchers)               ║")
     print("║       Protect bees by locating hornet nests                  ║")
     print("╚══════════════════════════════════════════════════════════════╝")
