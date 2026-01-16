@@ -84,11 +84,17 @@ class HiveCalculator:
 
         difference = abs(empirical.distance_from_observer - theoretical.distance_from_observer)
 
+        # Prevent division by zero (defensive check)
+        if empirical.distance_from_observer > 0:
+            difference_percent = (difference / empirical.distance_from_observer) * 100
+        else:
+            difference_percent = 0.0
+
         return {
             "empirical": empirical,
             "theoretical": theoretical,
             "difference_meters": difference,
-            "difference_percent": (difference / empirical.distance_from_observer) * 100,
+            "difference_percent": difference_percent,
             "recommended": "empirical",
         }
 

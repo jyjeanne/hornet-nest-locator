@@ -75,6 +75,9 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
         + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(delta_lon / 2) ** 2
     )
 
+    # Clamp 'a' to [0, 1] to prevent floating-point errors causing sqrt of negative number
+    a = max(0.0, min(1.0, a))
+
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
     distance = EARTH_RADIUS_METERS * c

@@ -11,6 +11,6 @@ __all__ = [
     "Observation",
     "WildlifeAPIError",
     "WildlifeReporter",
-    "__version__",
     "__repository__",
+    "__version__",
 ]

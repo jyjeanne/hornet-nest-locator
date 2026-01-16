@@ -129,6 +129,12 @@ class WildlifeReporter:
                 "message": "Observation successfully submitted to Waarneming.nl",
             }
 
+        except requests.exceptions.Timeout as e:
+            raise WildlifeAPIError(
+                "Waarneming.nl API request timed out (30 seconds). Please try again."
+            ) from e
+        except requests.exceptions.ConnectionError as e:
+            raise WildlifeAPIError(f"Failed to connect to Waarneming.nl API: {e}") from e
         except requests.exceptions.RequestException as e:
             raise WildlifeAPIError(f"Failed to submit to Waarneming.nl: {e}") from e
         finally:
@@ -265,7 +271,4 @@ class WildlifeReporter:
         if country not in guides:
             country = "belgium"  # Default to Belgium
 
-        if country == "belgium":
-            return guides[country]
-        else:
-            return guides[country]
+        return guides[country]

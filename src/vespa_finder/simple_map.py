@@ -77,10 +77,19 @@ class SimpleMapGenerator:
             abs_output = os.path.realpath(output_file)
 
             # Ensure the output path is within the allowed base directory
-            if os.path.commonpath([base_dir, abs_output]) != base_dir:
+            # Use os.path.relpath to detect cross-drive or traversal attempts
+            try:
+                rel_path = os.path.relpath(abs_output, base_dir)
+                if rel_path.startswith(".."):
+                    raise MapGenerationError(
+                        f"Invalid output path outside allowed directory: {output_file}"
+                    )
+            except ValueError:
+                # On Windows, relpath raises ValueError for paths on different drives
                 raise MapGenerationError(
                     f"Invalid output path outside allowed directory: {output_file}"
-                )
+                ) from None
+
             # Ensure directory exists
             output_dir = os.path.dirname(abs_output)
             if output_dir and not os.path.exists(output_dir):
@@ -88,6 +97,8 @@ class SimpleMapGenerator:
 
             with open(abs_output, "w", encoding="utf-8") as f:
                 f.write(html_content)
+        except MapGenerationError:
+            raise  # Re-raise our own errors
         except PermissionError as e:
             raise MapGenerationError(f"Permission denied writing to {output_file}: {e}") from e
         except OSError as e:

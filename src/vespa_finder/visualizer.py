@@ -117,15 +117,28 @@ class MapVisualizer:
 
             abs_output = os.path.realpath(candidate_path)
 
-            # Ensure resolved path stays within the allowed base directory
-            if not abs_output.startswith(base_dir + os.sep) and abs_output != base_dir:
-                raise MapGenerationError(f"Invalid output path outside allowed directory: {output_file}")
+            # Ensure the output path is within the allowed base directory
+            # Use os.path.relpath to detect cross-drive or traversal attempts
+            try:
+                rel_path = os.path.relpath(abs_output, base_dir)
+                if rel_path.startswith(".."):
+                    raise MapGenerationError(
+                        f"Invalid output path outside allowed directory: {output_file}"
+                    )
+            except ValueError:
+                # On Windows, relpath raises ValueError for paths on different drives
+                raise MapGenerationError(
+                    f"Invalid output path outside allowed directory: {output_file}"
+                ) from None
+
             # Ensure directory exists
             output_dir = os.path.dirname(abs_output)
             if output_dir and not os.path.exists(output_dir):
                 os.makedirs(output_dir, exist_ok=True)
 
             m.save(abs_output)
+        except MapGenerationError:
+            raise  # Re-raise our own errors
         except PermissionError as e:
             raise MapGenerationError(f"Permission denied writing to {output_file}: {e}") from e
         except OSError as e:
